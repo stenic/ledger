@@ -1,0 +1,21 @@
+version: '3.4'
+
+services:
+  # ledger:
+  #   image: ledger
+  #   build:
+  #     context: .
+  #     dockerfile: ./Dockerfile
+  #   volumes:
+  #     - ./data:/app/data
+  #   ports:
+  #     - 8080:8080
+
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: ledger
+      MYSQL_ROOT_PASSWORD: ledger
+    ports:
+      - 3306:3306

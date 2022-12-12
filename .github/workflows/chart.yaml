@@ -1,0 +1,101 @@
+name: Chart
+on:
+  pull_request:
+    branches:
+      - 'main'
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  chart-testing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.7.1
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.7
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.3.1
+
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct --config .github/ct.yaml list-changed)
+          if [[ -n "$changed" ]]; then
+            echo "::set-output name=changed::true"
+          fi
+
+      - name: Run chart-testing (lint)
+        run: ct --config .github/ct.yaml lint
+
+  polaris-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.7.1
+
+      - name: Setup polaris
+        uses: fairwindsops/polaris/.github/actions/setup-polaris@master
+        with:
+          version: 7.2.0
+
+      - name: Run audit
+        run: |
+          (cd ./charts && ../polaris/polaris audit --helm-chart ledger --helm-values ./ledger/values.yaml --format pretty --set-exit-code-on-danger --set-exit-code-below-score 90)
+  
+  kubescape-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install Kubescape
+        run: curl -s https://raw.githubusercontent.com/armosec/kubescape/master/install.sh | /bin/bash
+        
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.7.1
+
+      - name: Scan helm 
+        run: helm template ./charts/ledger --generate-name --dry-run | kubescape scan --controls-config .github/kubescape-controls-inputs.json -v --fail-threshold 5 -
+
+  pluto-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.7.1
+
+      - name: Download Pluto
+        uses: FairwindsOps/pluto/github-action@master
+
+      - name: Use pluto
+        run: |
+          helm template ./charts/ledger -f ./charts/ledger/ci/pluto-values.yaml | pluto detect - --ignore-deprecations

@@ -1,0 +1,68 @@
+@host = http://127.0.0.1:8080
+@apiUrl = {{host}}/api
+@authToken = Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJBLTRYbGcxUDhORU83dDBaNWxaLTV1MHJ5aV9UaXdyMFIwTTFSUnc3NHBZIn0.eyJleHAiOjE2Njc1OTIyNTAsImlhdCI6MTY2NzU5MTk1MCwiYXV0aF90aW1lIjoxNjY3NTg5MjcwLCJqdGkiOiIyZjc2ZjExZS03ZGE4LTRiYjYtYjAyNS01OTQ5MGI5NjkyNGQiLCJpc3MiOiJodHRwczovL2F1dGguZGV2LnN0ZW5pYy5pby9hdXRoL3JlYWxtcy9kZXYiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiYzY0MjBmZWUtNzljZi00NWM0LThjNTAtYTViOWM2MzA3ZmU1IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoibGVkZ2VyIiwic2Vzc2lvbl9zdGF0ZSI6IjllODUxM2U3LWUyNjktNGQyZS1iNmUyLTBmNTIzMTlkNzE0YSIsImFjciI6IjAiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDo4MDgwIiwiaHR0cDovLzEyNy4wLjAuMTo4MDgwIiwiaHR0cDovLzEyNy4wLjAuMTozMDAwIiwiaHR0cDovL2xvY2FsaG9zdDozMDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJkcmllcyJ9.icDGb-EGwDUGQVVK-icC2_PFhn03VxTOuiY1U6inPCUYt53D2n1uMNlYy9SwoXAiWmQYi-qdZG_kOw8VjOh33vto62VUKKv0Oew82QE3rFdFr8PR50ubzPn-TDUNO2RQfjZY4kYBC2IEd-HDfmerE1_fhJhtwa5pxsSf6o2eDylb1FhdnVBoxQTzahVi0uPWW51TBHIWpd6qPMstaKKfFsl8xLwjJiT5wlZrNq-DhOrfHUO3aXpY_mXUvJL9EaM4nkHdh58BOMgogP5jbfGgn_3b9-TiuApWsETB7S6gwdq_vEgf_yD6Ms85gzqPdP1YV32XEEsNmwmOKGgyBjJiqQ
+
+@clientId = ledger
+@username = fakeuser
+@password = fakepassword
+
+
+### Oauth credentials
+# x@prompt username
+# x@prompt password
+# @name getToken
+POST https://auth.dev.stenic.io/auth/realms/dev/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&password={{password}}&username={{username}}
+
+###
+
+GET {{host}}/ HTTP/1.1
+
+###
+GET {{apiUrl}}/versions?filter={"q":"prod"} HTTP/1.1
+Authorization: Bearer {{getToken.response.body.access_token}}
+
+###
+
+POST {{apiUrl}}/versions HTTP/1.1
+Authorization: Bearer {{getToken.response.body.access_token}}
+Content-Type: application/json
+
+{
+    "environment":"production-{{$randomInt 1 5}}",
+    "application":"test-app-{{$randomInt 0 10}}",
+    "version":"{{$randomInt 0 10}}.{{$randomInt 0 10}}.{{$randomInt 0 10}}"
+}
+
+###
+
+GET {{apiUrl}}/environment HTTP/1.1
+Authorization: Bearer {{getToken.response.body.access_token}}
+
+###
+
+GET {{apiUrl}}/stats/appdeploys HTTP/1.1
+Authorization: Bearer {{getToken.response.body.access_token}}
+
+###
+
+POST {{apiUrl}}/versions HTTP/1.1
+Authorization: Bearer {{getToken.response.body.access_token}}
+Content-Type: application/json
+
+{
+    "environment": "production",
+    "application": "my-app",
+    "version": "1.2.3"
+}
+
+###
+
+
+POST {{host}}/query HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImplZmYiLCJpc3MiOiJsZWRnZXItbG9jYWwtY2xpZW50Iiwic3ViIjoiamVmZiIsImF1ZCI6WyJsZWRnZXIiXSwiZXhwIjoxNzAyMDMyMjc5LCJuYmYiOjE2NzA0OTYyNzksImlhdCI6MTY3MDQ5NjI3OSwianRpIjoiYWYyYjZmMzItZGZjMC00MmY3LTkxYjMtOGQyM2YxMzg5NWM2In0.n5E58RXsV7IgaZVvWTNTYpvazlmeFvOJ6JGBFR6BkNk
+content-type: application/json
+
+{"query":"{\n  versions(orderBy: {timestamp: desc}) {\n    id\n    application {\n      name\n    }\n    timestamp\n    environment {\n      name\n    }\n    version\n  }\n}","variables":{}}

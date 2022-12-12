@@ -1,0 +1,53 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+# go get github.com/99designs/gqlgen
+# go run github.com/99designs/gqlgen generate
+
+enum Sort {
+  asc
+  desc
+}
+
+type Version {
+  id: ID!
+  application: Application!
+  environment: Environment!
+  version: String!
+  timestamp: String!
+}
+
+input VersionOrderByInput {
+  application: Sort
+  environment: Sort
+  timestamp: Sort
+}
+
+type Environment {
+  name: String!
+}
+
+type Application {
+  name: String!
+}
+
+type Query {
+  versions(orderBy: VersionOrderByInput): [Version!]!
+  environments: [Environment!]!
+  applications: [Application!]!
+}
+
+input NewVersion {
+  application: String!
+  environment: String!
+  version: String!
+}
+
+type AuthPayload {
+  token: String!
+}
+
+type Mutation {
+  createVersion(input: NewVersion!): Version!
+  login(username: String!, password: String!): AuthPayload!
+}
