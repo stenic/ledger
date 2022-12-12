@@ -71,6 +71,16 @@ func (s *Server) Listen(addr string) error {
 		c.JSON(http.StatusOK, oidcOptions)
 	})
 
+	s.server.GET("/download", func(c *gin.Context) {
+		bin, _ := os.Executable()
+		c.Header("Content-Description", "File Transfer")
+		c.Header("Content-Transfer-Encoding", "binary")
+		c.Header("Content-Disposition", "attachment; filename=ledger")
+		c.Header("Content-Type", "application/octet-stream")
+
+		c.File(bin)
+	})
+
 	logrus.Info("Starting webserver")
 	return s.server.Run(addr)
 }

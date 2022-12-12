@@ -1,67 +1,96 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/stenic/ledger/internal/auth"
-	"github.com/stenic/ledger/internal/pkg/client"
-	"github.com/stenic/ledger/internal/storage"
+	"github.com/stenic/ledger/internal/pkg/utils/env"
 )
 
 func NewClientCmd() *cobra.Command {
 	clientCommand := &cobra.Command{
 		Use:   "client",
-		Short: "Manage clients",
+		Short: "Ledger client",
 		Run: func(c *cobra.Command, args []string) {
 			c.Help()
 		},
 	}
 
 	clientCommand.AddCommand(
-		NewClientAddTokenCmd(),
+		NewClientAddVersionCmd(),
 	)
 
 	return clientCommand
 }
 
-func NewClientAddTokenCmd() *cobra.Command {
+func NewClientAddVersionCmd() *cobra.Command {
 	var (
-		ttlDays int
+		endpoint string
 	)
-
 	cmd := &cobra.Command{
-		Use:   "new-token 'username'",
-		Short: "Create a new token",
+		Use:   "new-version APPLICATION ENVIRONMENT VERSION",
+		Short: "Send a version",
 		Run: func(c *cobra.Command, args []string) {
-			engine := storage.Database{}
-			engine.InitDB()
-			defer engine.CloseDB()
-			engine.Migrate()
+			c.Println(os.Executable())
 
-			newClient, err := client.CreateClient(args[0])
-			if err != nil {
-				c.PrintErr(err)
+			tkn := env.GetString("TOKEN", "")
+			if tkn == "" {
+				c.PrintErrln("Please provide a TOKEN environment variable")
+				os.Exit(1)
 			}
 
-			tkn, err := auth.GenerateToken(newClient.Username,
-				func(claims *auth.Claims) {
-					claims.RegisteredClaims.ID = newClient.ID
-					claims.RegisteredClaims.Issuer = client.LocalClientIssuer
-					claims.RegisteredClaims.NotBefore = jwt.NewNumericDate(time.Now())
-					claims.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(365 * 24 * time.Hour))
-				})
+			ep := endpoint + "/query"
+			logrus.Infof("Sending data to %s", ep)
+
+			jsonData := map[string]string{
+				"query": fmt.Sprintf(`
+					mutation { 
+						createVersion(input: {
+							application: "%s",
+							environment: "%s",
+							version: "%s"
+						}) {
+							id
+						}
+					}
+				`, args[0], args[1], args[2]),
+			}
+			jsonValue, _ := json.Marshal(jsonData)
+			logrus.Debugf("Payload: %s", jsonValue)
+
+			request, err := http.NewRequest("POST", ep, bytes.NewBuffer(jsonValue))
+			request.Header.Add("Authorization", "Bearer "+tkn)
+			request.Header.Add("Content-Type", "application/json")
 			if err != nil {
 				c.PrintErr(err)
+				os.Exit(1)
 			}
 
-			c.Println(tkn)
+			client := &http.Client{Timeout: time.Second * 10}
+			response, err := client.Do(request)
+			if err != nil {
+				if err != nil {
+					c.PrintErr("The HTTP request failed with error: " + err.Error())
+					os.Exit(1)
+				}
+			}
+			defer response.Body.Close()
+
+			data, _ := ioutil.ReadAll(response.Body)
+			logrus.Debug("Response: %s", data)
+			logrus.Info("Version created in ledger")
 		},
-		Args: cobra.ExactArgs(1),
+		Args: cobra.ExactArgs(3),
 	}
 
-	cmd.Flags().IntVar(&ttlDays, "ttldays", 365, "TTL in days for the token")
+	cmd.Flags().StringVar(&endpoint, "endpoint", env.GetString("LEDGER_ENDPOINT", "http://127.0.0.1:8080"), "Ledger endpoint url")
 
 	return cmd
 }
