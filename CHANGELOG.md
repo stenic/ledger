@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.0.0 (2022-12-12)
+
+
+### Features
+
+* Init project ([2994a9d](https://github.com/stenic/ledger/commit/2994a9dd3e338c242f38d0630889abfe6411752b))
+
 ## [1.1.14](https://github.com/stenic/ledger/compare/v1.1.13...v1.1.14) (2022-12-08)
 
 
