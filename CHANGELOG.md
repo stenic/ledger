@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/stenic/ledger/compare/v1.0.0...v1.1.0) (2022-12-12)
+
+
+### Features
+
+* Add client and client download ([e0b6eb1](https://github.com/stenic/ledger/commit/e0b6eb10494971469f3e5551999847023d0f063d))
+
 # 1.0.0 (2022-12-12)
 
 
