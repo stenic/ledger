@@ -77,7 +77,7 @@ func (c *Client) WatchDeploymentEvents(ctx context.Context, namespace string, no
 func (c *Client) WatchStatefulsetEvents(ctx context.Context, namespace string, notifyFunc NotifyFunc) error {
 	watcher, err := c.clientset.AppsV1().StatefulSets(namespace).Watch(ctx, metav1.ListOptions{})
 	if err != nil {
-		return errors.Wrap(err, "cannot create Deployment event watcher")
+		return errors.Wrap(err, "cannot create StatefulSet event watcher")
 	}
 
 	go func() {

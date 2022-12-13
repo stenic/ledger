@@ -1,0 +1,17 @@
+{{- if .Values.ledgerAgent.enabled -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "ledger.fullname" . }}-agent
+  labels:
+    {{- include "ledger.labels" . | nindent 4 }}
+    component: agent
+rules:
+- apiGroups:
+  - "apps"
+  resources:
+  - deployments
+  - statefulsets
+  verbs:
+  - watch
+{{- end }}

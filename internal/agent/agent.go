@@ -14,7 +14,7 @@ import (
 
 // https://github.com/dtan4/k8s-pod-notifier/blob/master/kubernetes/client.go
 
-func Run(endpoint string) {
+func Run(endpoint, namespace string) {
 	kubeconfigPath := filepath.Join(homedir.HomeDir(), ".kube", "config")
 
 	k8sClient, err := kubernetes.NewClient(kubeconfigPath)
@@ -40,7 +40,7 @@ func Run(endpoint string) {
 	wg.Add(1)
 	go func() {
 		logrus.Info("Watching for deployment changes")
-		if err := k8sClient.WatchDeploymentEvents(ctx, kubernetes.DefaultNamespace(), notify); err != nil {
+		if err := k8sClient.WatchDeploymentEvents(ctx, namespace, notify); err != nil {
 			logrus.Error(err)
 			cancel()
 		}
@@ -49,7 +49,7 @@ func Run(endpoint string) {
 	wg.Add(1)
 	go func() {
 		logrus.Info("Watching for statefulset changes")
-		if err := k8sClient.WatchStatefulsetEvents(ctx, kubernetes.DefaultNamespace(), notify); err != nil {
+		if err := k8sClient.WatchStatefulsetEvents(ctx, namespace, notify); err != nil {
 			logrus.Error(err)
 			cancel()
 		}

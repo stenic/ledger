@@ -104,7 +104,8 @@ affinity: {}
 # tolerations -- Node tolerations for server scheduling to nodes with taints
 tolerations: []
 
-ledger:
+ledgerServer:
+  enabled: true
   oidc:
     issuerURL: https://[keycloak-url]/auth/realms/[realm-name]
     clientID: ledger
@@ -112,5 +113,13 @@ ledger:
     secret: ""
   mysql:
     dsn: ""
+  log:
+    level: info
+
+ledgerAgent:
+  enabled: true
+  endpoint: http://ledger
+  namespaced: true
+  token: default
   log:
     level: info

@@ -1,28 +1,33 @@
+{{- if .Values.ledgerAgent.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "ledger-agent.fullname" . }}
+  name: {{ include "ledger.fullname" . }}-agent
   labels:
-    {{- include "ledger-agent.labels" . | nindent 4 }}
+    {{- include "ledger.labels" . | nindent 4 }}
+    component: agent
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "ledger-agent.selectorLabels" . | nindent 6 }}
+      {{- include "ledger.selectorLabels" . | nindent 6 }}
+      component: agent
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/agent_secret.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "ledger-agent.selectorLabels" . | nindent 8 }}
+        {{- include "ledger.selectorLabels" . | nindent 8 }}
+        component: agent
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "ledger-agent.serviceAccountName" . }}
+      serviceAccountName: {{ include "ledger.serviceAccountName" . }}-agent
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -39,12 +44,14 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: endpoint
-                  name: {{ include "ledger-agent.fullname" . }}
+                  name: {{ include "ledger.fullname" . }}-agent
             - name: TOKEN
               valueFrom:
                 secretKeyRef:
                   key: token
-                  name: {{ include "ledger-agent.fullname" . }}
+                  name: {{ include "ledger.fullname" . }}-agent
+            - name: LEDGER_NAMESPACE
+              value: {{ .Values.ledgerAgent.namespaced ? .Release.Namespace : "" }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -57,3 +64,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- end }}

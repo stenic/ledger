@@ -1,9 +1,11 @@
+{{- if .Values.ledgerServer.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "ledger.fullname" . }}
   labels:
     {{- include "ledger.labels" . | nindent 4 }}
+    component: server
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -13,3 +15,5 @@ spec:
       name: http
   selector:
     {{- include "ledger.selectorLabels" . | nindent 4 }}
+    component: server
+{{- end }}
