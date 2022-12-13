@@ -9,7 +9,7 @@ require (
 	github.com/gin-contrib/gzip v0.0.6
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.8.1
-	github.com/go-sql-driver/mysql v1.5.0
+	github.com/go-sql-driver/mysql v1.7.0
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/sbecker/gin-api-demo v0.0.0-20180212174919-07f9a9242f74
 	github.com/sirupsen/logrus v1.9.0
