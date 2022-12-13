@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.4](https://github.com/stenic/ledger/compare/v1.2.3...v1.2.4) (2022-12-13)
+
+
+### Bug Fixes
+
+* Improve agent logs ([861a3d9](https://github.com/stenic/ledger/commit/861a3d9e0a3eb7fd6437e2bc8c93c46a374f072f))
+
 ## [1.2.3](https://github.com/stenic/ledger/compare/v1.2.2...v1.2.3) (2022-12-13)
 
 
