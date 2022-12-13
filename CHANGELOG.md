@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.3](https://github.com/stenic/ledger/compare/v1.2.2...v1.2.3) (2022-12-13)
+
+
+### Bug Fixes
+
+* Support cluster wide agent ([ff36888](https://github.com/stenic/ledger/commit/ff368888fa24384a70c0b85af7a986deac8e7bc0))
+
 ## [1.2.2](https://github.com/stenic/ledger/compare/v1.2.1...v1.2.2) (2022-12-13)
 
 
