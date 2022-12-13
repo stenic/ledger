@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.6](https://github.com/stenic/ledger/compare/v1.2.5...v1.2.6) (2022-12-13)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/99designs/gqlgen to v0.17.22 ([#2](https://github.com/stenic/ledger/issues/2)) ([0892f4c](https://github.com/stenic/ledger/commit/0892f4ca1b1060a07e59f709106c4dad0bd64203))
+* **deps:** update module github.com/go-sql-driver/mysql to v1.7.0 ([#6](https://github.com/stenic/ledger/issues/6)) ([56e087f](https://github.com/stenic/ledger/commit/56e087f804916e91e10b0c541ac8475db673ec7f))
+* **deps:** update module github.com/golang-jwt/jwt/v4 to v4.4.3 ([#3](https://github.com/stenic/ledger/issues/3)) ([505b381](https://github.com/stenic/ledger/commit/505b3818eb855db954ebb82ed390ab8cec6f2406))
+
 ## [1.2.5](https://github.com/stenic/ledger/compare/v1.2.4...v1.2.5) (2022-12-13)
 
 
