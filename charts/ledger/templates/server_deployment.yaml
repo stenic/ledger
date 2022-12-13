@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "ledger.fullname" . }}
+  name: {{ include "ledger.fullname" . }}-server
   labels:
     {{- include "ledger.labels" . | nindent 4 }}
     component: server
@@ -29,11 +29,11 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "ledger.serviceAccountName" . }}
+      serviceAccountName: {{ include "ledger.serviceAccountName" . }}-server
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name }}-server
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -57,27 +57,27 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: mysql-dsn
-                  name: {{ include "ledger.fullname" . }}
+                  name: {{ include "ledger.fullname" . }}-server
             - name: OIDC_ISSUER_URL
               valueFrom:
                 secretKeyRef:
                   key: oidc-issuer-url
-                  name: {{ include "ledger.fullname" . }}
+                  name: {{ include "ledger.fullname" . }}-server
             - name: OIDC_CLIENT_ID
               valueFrom:
                 secretKeyRef:
                   key: oidc-client-id
-                  name: {{ include "ledger.fullname" . }}
+                  name: {{ include "ledger.fullname" . }}-server
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
                   key: jwt-secret
-                  name: {{ include "ledger.fullname" . }}
+                  name: {{ include "ledger.fullname" . }}-server
             - name: LOG_LEVEL
               valueFrom:
                 secretKeyRef:
                   key: log-level
-                  name: {{ include "ledger.fullname" . }}
+                  name: {{ include "ledger.fullname" . }}-server
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

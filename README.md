@@ -26,3 +26,9 @@ curl 'https://ledger.development.tbnlabs.be/query' \
  --compressed \
  --insecure
 ```
+
+##
+
+```
+kubectl exec -ti svc/ledger-server /app/ledger admin new-token agent
+```

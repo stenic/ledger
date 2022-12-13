@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "ledger.fullname" . }}
+  name: {{ include "ledger.fullname" . }}-server
   labels:
     {{- include "ledger.labels" . | nindent 4 }}
     component: server

@@ -3,7 +3,7 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "ledger.fullname" . }}
+  name: {{ include "ledger.fullname" . }}-server
   labels:
     {{- include "ledger.labels" . | nindent 4 }}
     component: server

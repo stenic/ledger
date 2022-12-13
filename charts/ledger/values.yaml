@@ -118,7 +118,7 @@ ledgerServer:
 
 ledgerAgent:
   enabled: true
-  endpoint: http://ledger
+  endpoint: http://ledger-server
   namespaced: true
   token: default
   log:
