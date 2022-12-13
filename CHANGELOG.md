@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.5](https://github.com/stenic/ledger/compare/v1.2.4...v1.2.5) (2022-12-13)
+
+
+### Bug Fixes
+
+* Save last usage ([61129b6](https://github.com/stenic/ledger/commit/61129b6ffe60b7e61c459bbb8e5c94d0d0bf0c38))
+
 ## [1.2.4](https://github.com/stenic/ledger/compare/v1.2.3...v1.2.4) (2022-12-13)
 
 
