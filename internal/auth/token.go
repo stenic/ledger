@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/stenic/ledger/internal/pkg/client"
 	"github.com/stenic/ledger/internal/pkg/users"
 )
@@ -93,6 +94,9 @@ func ValidateToken(token string) (*Claims, error) {
 		// Check if the client still exists
 		if len(client.FindByID(claims.RegisteredClaims.ID)) != 1 {
 			return nil, fmt.Errorf("unknown client token - %s", claims.RegisteredClaims.ID)
+		}
+		if err := client.UpdateLastUsageByID(claims.RegisteredClaims.ID); err != nil {
+			logrus.Warn("failed to update last_usage: " + err.Error())
 		}
 	default:
 		return nil, fmt.Errorf("invalid issuer")

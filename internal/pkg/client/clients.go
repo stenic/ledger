@@ -60,6 +60,19 @@ func FindByID(id string) []Client {
 	return items
 }
 
+func UpdateLastUsageByID(id string) error {
+	stmt, err := storage.Db.Prepare("UPDATE clients SET last_usage = ? WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(
+		time.Now(),
+		id,
+	)
+	return err
+}
+
 func runQuery(query string, args ...any) ([]Client, error) {
 	stmt, err := storage.Db.Prepare(query)
 	if err != nil {
