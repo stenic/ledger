@@ -38,4 +38,5 @@ USER 65532:65532
 ENV STATIC_ASSET_PATH=/app/static
 ENV LOG_FORMAT=json
 
-ENTRYPOINT ["/app/dumb-init", "--", "/app/ledger", "server"]
+ENTRYPOINT ["/app/dumb-init", "--", "/app/ledger"]
+CMD [ "server" ]

@@ -1,16 +1,11 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
 	"os"
-	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/stenic/ledger/internal/client"
 	"github.com/stenic/ledger/internal/pkg/utils/env"
 )
 
@@ -46,45 +41,15 @@ func NewClientAddVersionCmd() *cobra.Command {
 				os.Exit(1)
 			}
 
-			ep := endpoint + "/query"
-			logrus.Infof("Sending data to %s", ep)
-
-			jsonData := map[string]string{
-				"query": fmt.Sprintf(`
-					mutation { 
-						createVersion(input: {
-							application: "%s",
-							environment: "%s",
-							version: "%s"
-						}) {
-							id
-						}
-					}
-				`, args[0], args[1], args[2]),
+			lc := client.LedgerClient{
+				Endpoint: endpoint + "/query",
+				Token:    tkn,
 			}
-			jsonValue, _ := json.Marshal(jsonData)
-			logrus.Debugf("Payload: %s", jsonValue)
-
-			request, err := http.NewRequest("POST", ep, bytes.NewBuffer(jsonValue))
-			request.Header.Add("Authorization", "Bearer "+tkn)
-			request.Header.Add("Content-Type", "application/json")
-			if err != nil {
-				c.PrintErr(err)
-				os.Exit(1)
+			logrus.Infof("Sending data to %s", lc.Endpoint)
+			if err := lc.PostNewVersion(args[0], args[1], args[2]); err != nil {
+				logrus.Error(err)
 			}
 
-			client := &http.Client{Timeout: time.Second * 10}
-			response, err := client.Do(request)
-			if err != nil {
-				if err != nil {
-					c.PrintErr("The HTTP request failed with error: " + err.Error())
-					os.Exit(1)
-				}
-			}
-			defer response.Body.Close()
-
-			data, _ := ioutil.ReadAll(response.Body)
-			logrus.Debug("Response: %s", data)
 			logrus.Info("Version created in ledger")
 		},
 		Args: cobra.ExactArgs(3),

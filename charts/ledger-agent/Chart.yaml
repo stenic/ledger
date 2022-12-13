@@ -1,0 +1,15 @@
+apiVersion: v2
+name: ledger-agent
+description: A Helm chart for Kubernetes
+type: application
+version: 0.3.0
+appVersion: 1.0.0
+maintainers:
+  - email: dries@stenic.io
+    name: Stenic
+icon: https://raw.githubusercontent.com/stenic/ledger/gh-pages/images/logo.png
+home: https://github.com/stenic/ledger/tree/main/charts/ledger
+sources:
+  - https://github.com/stenic/ledger
+keywords:
+  - deployment
