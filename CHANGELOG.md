@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://github.com/stenic/ledger/compare/v1.2.0...v1.2.1) (2022-12-13)
+
+
+### Bug Fixes
+
+* Single chart ([1f86eaf](https://github.com/stenic/ledger/commit/1f86eaf1e37e6031c7cb64f79697012aaf32ace3))
+
 # [1.2.0](https://github.com/stenic/ledger/compare/v1.1.0...v1.2.0) (2022-12-13)
 
 
