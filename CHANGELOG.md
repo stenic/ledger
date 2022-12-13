@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/stenic/ledger/compare/v1.1.0...v1.2.0) (2022-12-13)
+
+
+### Features
+
+* Add agent for collecting information ([d25fd2a](https://github.com/stenic/ledger/commit/d25fd2a9c99104b3d7d34ad7ebef7a41d5dcfbd8))
+
 # [1.1.0](https://github.com/stenic/ledger/compare/v1.0.0...v1.1.0) (2022-12-12)
 
 
