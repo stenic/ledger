@@ -1,6 +1,6 @@
 {{- if .Values.ledgerAgent.enabled -}}
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: {{ .Values.ledgerAgent.namespaced | ternary "Role" "ClusterRole" }}
 metadata:
   name: {{ include "ledger.fullname" . }}-agent
   labels:

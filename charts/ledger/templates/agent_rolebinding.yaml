@@ -1,14 +1,14 @@
 {{- if .Values.ledgerAgent.enabled -}}
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: {{ .Values.ledgerAgent.namespaced | ternary "RoleBinding" "ClusterRoleBinding" }}
 metadata:
-  name: {{ include "ledger.fullname" . }}
+  name: {{ include "ledger.fullname" . }}-agent
   labels:
     {{- include "ledger.labels" . | nindent 4 }}
     component: agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: Role
+  kind: {{ .Values.ledgerAgent.namespaced | ternary "Role" "ClusterRole" }}
   name: {{ include "ledger.fullname" . }}-agent
 subjects:
 - kind: ServiceAccount
