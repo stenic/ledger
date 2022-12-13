@@ -51,7 +51,7 @@ spec:
                   key: token
                   name: {{ include "ledger.fullname" . }}-agent
             - name: LEDGER_NAMESPACE
-              value: {{ .Values.ledgerAgent.namespaced ? .Release.Namespace : "" }}
+              value: {{ .Values.ledgerAgent.namespaced | ternary .Release.Namespace "" }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
