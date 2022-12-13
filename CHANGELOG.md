@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.2](https://github.com/stenic/ledger/compare/v1.2.1...v1.2.2) (2022-12-13)
+
+
+### Bug Fixes
+
+* Helm syntax error ([7dfd982](https://github.com/stenic/ledger/commit/7dfd9826812e96d6408b79fdaad5ecbea253d47f))
+* Improve helm chart ([4d279c5](https://github.com/stenic/ledger/commit/4d279c54921dbf6a5363eaf0a78df1c864bf1314))
+
 ## [1.2.1](https://github.com/stenic/ledger/compare/v1.2.0...v1.2.1) (2022-12-13)
 
 
