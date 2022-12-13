@@ -33,7 +33,7 @@ func (c *LedgerClient) PostNewVersion(app, env, version string) error {
 	}
 	jsonValue, _ := json.Marshal(jsonData)
 	r := regexp.MustCompile(`(\\[tn]|\s+)`)
-	logrus.Debugf("Payload: %s", r.ReplaceAllString(string(jsonValue), ""))
+	logrus.Tracef("Payload: %s", r.ReplaceAllString(string(jsonValue), ""))
 
 	request, err := http.NewRequest("POST", c.Endpoint, bytes.NewBuffer(jsonValue))
 	request.Header.Add("Authorization", "Bearer "+c.Token)
@@ -49,7 +49,8 @@ func (c *LedgerClient) PostNewVersion(app, env, version string) error {
 	}
 	defer response.Body.Close()
 
-	_, err = ioutil.ReadAll(response.Body)
+	body, err := ioutil.ReadAll(response.Body)
+	logrus.Tracef("Response: %s", string(body))
 
 	return err
 }

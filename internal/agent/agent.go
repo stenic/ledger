@@ -66,7 +66,9 @@ func getNotifyFunc(lc client.LedgerClient) kubernetes.NotifyFunc {
 				"environment": e.Environment,
 				"version":     e.Version,
 			}).Info("Notifying ledger")
-			lc.PostNewVersion(e.Application, e.Environment, e.Version)
+			if err := lc.PostNewVersion(e.Application, e.Environment, e.Version); err != nil {
+				logrus.Error(err)
+			}
 		}
 		return nil
 	}
