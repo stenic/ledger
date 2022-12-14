@@ -152,13 +152,13 @@ func collectObjectInfo(objectMeta metav1.ObjectMeta, podTemplate v1.PodTemplateS
 	env := objectMeta.Namespace
 	loc := ""
 
-	if val, ok := objectMeta.Annotations["ledger.stenic.io/application"]; ok {
+	if val, ok := objectMeta.Annotations[LedgerAnnotationApplication]; ok {
 		app = val
 	}
-	if val, ok := objectMeta.Annotations["ledger.stenic.io/environment"]; ok {
+	if val, ok := objectMeta.Annotations[LedgerAnnotationEnvironment]; ok {
 		env = val
 	}
-	if val, ok := objectMeta.Annotations["ledger.stenic.io/location"]; ok {
+	if val, ok := objectMeta.Annotations[LedgerAnnotationLocation]; ok {
 		loc = val
 	}
 
