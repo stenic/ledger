@@ -59,7 +59,7 @@ jobs:
 
       - name: Run audit
         run: |
-          (cd ./charts && ../polaris/polaris audit --helm-chart ledger --helm-values ./ledger/values.yaml --format pretty --set-exit-code-on-danger --set-exit-code-below-score 90)
+          (cd ./charts && ../polaris/polaris audit --helm-chart ledger --helm-values ./ledger/values.yaml --helm-values ./ledger/ci/pluto-values.yaml --format pretty --set-exit-code-on-danger --set-exit-code-below-score 90)
   
   kubescape-scan:
     runs-on: ubuntu-latest
