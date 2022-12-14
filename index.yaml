@@ -2,6 +2,26 @@ apiVersion: v1
 entries:
   ledger:
   - apiVersion: v2
+    appVersion: 1.3.0
+    created: "2022-12-14T11:23:10.499957682Z"
+    description: A Helm chart for Kubernetes
+    digest: f39a7f5e9236bab2c9e02f1e21dcfc084045e443568bc32a4add66838ab77997
+    home: https://github.com/stenic/ledger/tree/main/charts/ledger
+    icon: https://raw.githubusercontent.com/stenic/ledger/gh-pages/images/logo.png
+    keywords:
+    - dashboard
+    - deployment
+    maintainers:
+    - email: dries@stenic.io
+      name: Stenic
+    name: ledger
+    sources:
+    - https://github.com/stenic/ledger
+    type: application
+    urls:
+    - https://github.com/stenic/ledger/releases/download/ledger-0.6.0/ledger-0.6.0.tgz
+    version: 0.6.0
+  - apiVersion: v2
     appVersion: 1.2.6
     created: "2022-12-13T13:55:37.115398022Z"
     description: A Helm chart for Kubernetes
@@ -181,4 +201,4 @@ entries:
     urls:
     - https://github.com/stenic/ledger/releases/download/ledger-0.3.0/ledger-0.3.0.tgz
     version: 0.3.0
-generated: "2022-12-13T13:55:37.115435622Z"
+generated: "2022-12-14T11:23:10.500002883Z"
