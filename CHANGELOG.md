@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.3](https://github.com/stenic/ledger/compare/v1.3.2...v1.3.3) (2022-12-14)
+
+
+### Bug Fixes
+
+* Annotations as constants ([f295c52](https://github.com/stenic/ledger/commit/f295c5296ecaf1e0174502f1db3363585f567bee))
+* **chart:** Make sure token is configured for the agent ([38f477f](https://github.com/stenic/ledger/commit/38f477fca35a4fb9c708393723db2c6611dfde97))
+* Default do cluster wide installs of the agent ([6f74ea3](https://github.com/stenic/ledger/commit/6f74ea3260ce5f8b9c685c1ee1b060763a8916df))
+
 ## [1.3.2](https://github.com/stenic/ledger/compare/v1.3.1...v1.3.2) (2022-12-14)
 
 
