@@ -120,7 +120,7 @@ ledgerAgent:
   enabled: true
   endpoint: http://ledger-server
   location: ""
-  namespaced: true
+  namespaced: false
   token: default
   log:
     level: info
