@@ -15,6 +15,9 @@ const Versions = () => {
           application {
             name
           }
+          location {
+            name
+          }
           timestamp
           environment {
             name
@@ -27,17 +30,18 @@ const Versions = () => {
 
   const columns = [
     {
-      field: "id",
-      headerName: "ID",
-      type: "number",
-    },
-    {
       field: "application",
       headerName: "Application",
       flex: 1,
       cellClassName: "name-column--cell",
       valueGetter: (params: { row: VersionData }) =>
         params.row.application.name,
+    },
+    {
+      field: "location",
+      headerName: "Location",
+      flex: 1,
+      valueGetter: (params: { row: VersionData }) => params.row.location.name,
     },
     {
       field: "environment",

@@ -28,6 +28,7 @@ func NewClientCmd() *cobra.Command {
 func NewClientAddVersionCmd() *cobra.Command {
 	var (
 		endpoint string
+		location string
 	)
 	cmd := &cobra.Command{
 		Use:   "new-version APPLICATION ENVIRONMENT VERSION",
@@ -46,7 +47,7 @@ func NewClientAddVersionCmd() *cobra.Command {
 				Token:    tkn,
 			}
 			logrus.Infof("Sending data to %s", lc.Endpoint)
-			if err := lc.PostNewVersion(args[0], args[1], args[2]); err != nil {
+			if err := lc.PostNewVersion(args[0], location, args[1], args[2]); err != nil {
 				logrus.Error(err)
 			}
 
@@ -56,6 +57,7 @@ func NewClientAddVersionCmd() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&endpoint, "endpoint", env.GetString("LEDGER_ENDPOINT", "http://127.0.0.1:8080"), "Ledger endpoint url")
+	cmd.Flags().StringVar(&location, "location", env.GetString("LEDGER_LOCATION", ""), "Location")
 
 	return cmd
 }

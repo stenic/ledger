@@ -20,16 +20,22 @@ type Environment struct {
 	Name string `json:"name"`
 }
 
+type Location struct {
+	Name string `json:"name"`
+}
+
 type NewVersion struct {
-	Application string `json:"application"`
-	Environment string `json:"environment"`
-	Version     string `json:"version"`
+	Application string  `json:"application"`
+	Environment string  `json:"environment"`
+	Location    *string `json:"location"`
+	Version     string  `json:"version"`
 }
 
 type Version struct {
 	ID          string       `json:"id"`
 	Application *Application `json:"application"`
 	Environment *Environment `json:"environment"`
+	Location    *Location    `json:"location"`
 	Version     string       `json:"version"`
 	Timestamp   string       `json:"timestamp"`
 }
@@ -37,6 +43,7 @@ type Version struct {
 type VersionOrderByInput struct {
 	Application *Sort `json:"application"`
 	Environment *Sort `json:"environment"`
+	Location    *Sort `json:"location"`
 	Timestamp   *Sort `json:"timestamp"`
 }
 

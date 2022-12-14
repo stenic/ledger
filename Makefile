@@ -2,9 +2,12 @@ include .env
 export $(shell sed 's/=.*//' .env)
 
 .PHONY: ui
-ui:
+dev_ui:
 	cd ui \
 		&& npm start
+dev_server:
+	go install github.com/cosmtrek/air@latest
+	air
 
 gen:
 	go get github.com/99designs/gqlgen

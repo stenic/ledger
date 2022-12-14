@@ -5,6 +5,7 @@ package kubernetes
 type Event struct {
 	Environment string
 	Application string
+	Location    string
 	Version     string
 }
 

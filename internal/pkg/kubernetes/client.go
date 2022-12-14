@@ -155,14 +155,25 @@ func getImages(spec v1.PodTemplateSpec) (images []string) {
 }
 
 func collectObjectInfo(objectMeta metav1.ObjectMeta, podTemplate v1.PodTemplateSpec) (events []Event) {
-
 	app := objectMeta.Name
 	env := objectMeta.Namespace
+	loc := ""
+
+	if val, ok := objectMeta.Annotations["ledger.stenic.io/application"]; ok {
+		app = val
+	}
+	if val, ok := objectMeta.Annotations["ledger.stenic.io/environment"]; ok {
+		env = val
+	}
+	if val, ok := objectMeta.Annotations["ledger.stenic.io/location"]; ok {
+		loc = val
+	}
 
 	for _, img := range getImages(podTemplate) {
 		events = append(events, Event{
 			Application: app,
 			Environment: env,
+			Location:    loc,
 			Version:     strings.Split(img, ":")[1],
 		})
 	}

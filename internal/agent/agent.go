@@ -14,7 +14,7 @@ import (
 
 // https://github.com/dtan4/k8s-pod-notifier/blob/master/kubernetes/client.go
 
-func Run(endpoint, namespace string) {
+func Run(endpoint, namespace, location string) {
 	kubeconfigPath := filepath.Join(homedir.HomeDir(), ".kube", "config")
 
 	k8sClient, err := kubernetes.NewClient(kubeconfigPath)
@@ -35,7 +35,7 @@ func Run(endpoint, namespace string) {
 	notify := getNotifyFunc(client.LedgerClient{
 		Endpoint: endpoint + "/query",
 		Token:    tkn,
-	})
+	}, location)
 
 	wg.Add(1)
 	go func() {
@@ -58,7 +58,7 @@ func Run(endpoint, namespace string) {
 	wg.Wait()
 }
 
-func getNotifyFunc(lc client.LedgerClient) kubernetes.NotifyFunc {
+func getNotifyFunc(lc client.LedgerClient, location string) kubernetes.NotifyFunc {
 	return func(events []kubernetes.Event) error {
 		for _, e := range events {
 			logrus.WithFields(logrus.Fields{
@@ -66,7 +66,10 @@ func getNotifyFunc(lc client.LedgerClient) kubernetes.NotifyFunc {
 				"environment": e.Environment,
 				"version":     e.Version,
 			}).Info("Notifying ledger")
-			if err := lc.PostNewVersion(e.Application, e.Environment, e.Version); err != nil {
+			if e.Location == "" {
+				e.Location = location
+			}
+			if err := lc.PostNewVersion(e.Application, e.Location, e.Environment, e.Version); err != nil {
 				logrus.Error(err)
 			}
 		}

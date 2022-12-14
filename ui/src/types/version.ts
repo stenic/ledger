@@ -3,6 +3,9 @@ export interface VersionData {
   application: {
     name: string;
   };
+  location: {
+    name: string;
+  };
   environment: {
     name: string;
   };

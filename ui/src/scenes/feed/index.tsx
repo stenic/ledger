@@ -22,6 +22,9 @@ const Feed = () => {
           application {
             name
           }
+          location {
+            name
+          }
           timestamp
           environment {
             name
@@ -81,12 +84,15 @@ const Feed = () => {
                         Deployed{" "}
                         <Typography component="span" sx={{ fontWeight: 600 }}>
                           {version.application.name
-                            ? version.application.name + "@"
+                            ? version.application.name + ":"
                             : ""}
                           {version.version}
                         </Typography>{" "}
                         to{" "}
                         <Typography component="span" sx={{ fontWeight: 600 }}>
+                          {version.location.name === ""
+                            ? ""
+                            : version.location.name + "/"}
                           {version.environment.name}
                         </Typography>
                       </Typography>

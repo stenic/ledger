@@ -13,6 +13,7 @@ type Version struct {
 	ID          int64  `json:"id"`
 	Application string `json:"application"`
 	Environment string `json:"environment"`
+	Location    string `json:"location"`
 	Timestamp   string `json:"timestamp"`
 	Version     string `json:"version"`
 }
@@ -20,6 +21,7 @@ type Version struct {
 type VersionOrderBy struct {
 	Application query.Sort
 	Environment query.Sort
+	Location    query.Sort
 	Timestamp   query.Sort
 }
 
@@ -34,16 +36,19 @@ func (vop VersionOrderBy) GetParts() query.QueryParts {
 	if vop.Environment != query.SortUndefined {
 		qp.Order = append(qp.Order, fmt.Sprintf("environment %s", vop.Environment))
 	}
+	if vop.Location != query.SortUndefined {
+		qp.Order = append(qp.Order, fmt.Sprintf("location %s", vop.Location))
+	}
 
 	return qp
 }
 
 func (v Version) Save() int64 {
-	stmt, err := storage.Db.Prepare("INSERT INTO versions (environment, application, version) VALUES (?,?,?)")
+	stmt, err := storage.Db.Prepare("INSERT INTO versions (location, environment, application, version) VALUES (?, ?,?,?)")
 	if err != nil {
 		log.Fatal(err)
 	}
-	res, err := stmt.Exec(v.Environment, v.Application, v.Version)
+	res, err := stmt.Exec(v.Location, v.Environment, v.Application, v.Version)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -58,7 +63,7 @@ func (v Version) Save() int64 {
 }
 
 func GetAll(opts ...query.QueryOpts) []Version {
-	q := query.AddQueryParts("select id, application, environment, version, timestamp from versions", opts...)
+	q := query.AddQueryParts("select id, application, environment, location, version, timestamp from versions", opts...)
 	versions, err := runQuery(q)
 	if err != nil {
 		log.Fatal(err)
@@ -92,6 +97,7 @@ func mapVersions(rows *sql.Rows) ([]Version, error) {
 			&version.ID,
 			&version.Application,
 			&version.Environment,
+			&version.Location,
 			&version.Version,
 			&version.Timestamp,
 		)

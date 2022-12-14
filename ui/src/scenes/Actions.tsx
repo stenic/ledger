@@ -17,9 +17,11 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { useAuth } from "react-oidc-context";
 import { EnvironmentData } from "../types/environment";
 import { ApplicationData } from "../types/application";
+import { LocationData } from "../types/location";
 
 interface TFormData {
   environment: string;
+  location: string;
   application: string;
   version: string;
 }
@@ -27,6 +29,7 @@ interface TFormData {
 const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
   const defaultFormData = {
     environment: "",
+    location: "",
     application: "",
     version: "",
   };
@@ -34,6 +37,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
 
   const auth = useAuth();
   const [apps, setApps] = useState([]);
+  const [locs, setLocs] = useState([]);
   const [envs, setEnvs] = useState([]);
 
   useEffect(() => {
@@ -78,6 +82,27 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
       });
   }, [auth, setApps]);
 
+  useEffect(() => {
+    const token = auth.user?.access_token;
+    fetch("/query", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        query: "{ locations { name } }",
+      }),
+    })
+      .then((e) => e.json())
+      .then((d) => d.data.locations.map((r: LocationData) => r.name))
+      .then(setLocs)
+      .catch((e) => {
+        console.error(e);
+        // auth.signinSilent();
+      });
+  }, [auth, setLocs]);
+
   const saveHandler = (formData: TFormData) => {
     fetch("/query", {
       method: "POST",
@@ -86,7 +111,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
         Authorization: `Bearer ${auth.user?.access_token}`,
       },
       body: JSON.stringify({
-        query: `mutation { createVersion( input: { application:"${formData.application}", environment:"${formData.environment}", version:"${formData.version}" } ) { id } }`,
+        query: `mutation { createVersion( input: { application:"${formData.application}", environment:"${formData.environment}", version:"${formData.version}", location:"${formData.location}" } ) { id } }`,
       }),
     });
   };
@@ -108,6 +133,18 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
           Fill out the form below to add a new version.
         </DialogContentText>
         <form onSubmit={handleSubmit}>
+          <Autocomplete
+            disablePortal
+            fullWidth
+            freeSolo
+            onInputChange={(event, value) => {
+              setFormData({ ...formData, location: value });
+            }}
+            options={locs}
+            renderInput={(params) => (
+              <TextField name="location" {...params} label="Location" />
+            )}
+          />
           <Autocomplete
             disablePortal
             fullWidth

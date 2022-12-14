@@ -17,7 +17,7 @@ type LedgerClient struct {
 	Token    string
 }
 
-func (c *LedgerClient) PostNewVersion(app, env, version string) error {
+func (c *LedgerClient) PostNewVersion(app, location, env, version string) error {
 	jsonData := map[string]string{
 		"query": fmt.Sprintf(`
 			mutation { 

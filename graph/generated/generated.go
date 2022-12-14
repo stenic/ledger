@@ -56,6 +56,10 @@ type ComplexityRoot struct {
 		Name func(childComplexity int) int
 	}
 
+	Location struct {
+		Name func(childComplexity int) int
+	}
+
 	Mutation struct {
 		CreateVersion func(childComplexity int, input model.NewVersion) int
 		Login         func(childComplexity int, username string, password string) int
@@ -64,6 +68,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Applications func(childComplexity int) int
 		Environments func(childComplexity int) int
+		Locations    func(childComplexity int) int
 		Versions     func(childComplexity int, orderBy *model.VersionOrderByInput) int
 	}
 
@@ -71,6 +76,7 @@ type ComplexityRoot struct {
 		Application func(childComplexity int) int
 		Environment func(childComplexity int) int
 		ID          func(childComplexity int) int
+		Location    func(childComplexity int) int
 		Timestamp   func(childComplexity int) int
 		Version     func(childComplexity int) int
 	}
@@ -84,6 +90,7 @@ type QueryResolver interface {
 	Versions(ctx context.Context, orderBy *model.VersionOrderByInput) ([]*model.Version, error)
 	Environments(ctx context.Context) ([]*model.Environment, error)
 	Applications(ctx context.Context) ([]*model.Application, error)
+	Locations(ctx context.Context) ([]*model.Location, error)
 }
 
 type executableSchema struct {
@@ -121,6 +128,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Environment.Name(childComplexity), true
+
+	case "Location.name":
+		if e.complexity.Location.Name == nil {
+			break
+		}
+
+		return e.complexity.Location.Name(childComplexity), true
 
 	case "Mutation.createVersion":
 		if e.complexity.Mutation.CreateVersion == nil {
@@ -160,6 +174,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Environments(childComplexity), true
 
+	case "Query.locations":
+		if e.complexity.Query.Locations == nil {
+			break
+		}
+
+		return e.complexity.Query.Locations(childComplexity), true
+
 	case "Query.versions":
 		if e.complexity.Query.Versions == nil {
 			break
@@ -192,6 +213,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Version.ID(childComplexity), true
+
+	case "Version.location":
+		if e.complexity.Version.Location == nil {
+			break
+		}
+
+		return e.complexity.Version.Location(childComplexity), true
 
 	case "Version.timestamp":
 		if e.complexity.Version.Timestamp == nil {
@@ -292,6 +320,7 @@ type Version {
   id: ID!
   application: Application!
   environment: Environment!
+  location: Location!
   version: String!
   timestamp: String!
 }
@@ -299,6 +328,7 @@ type Version {
 input VersionOrderByInput {
   application: Sort
   environment: Sort
+  location: Sort
   timestamp: Sort
 }
 
@@ -310,15 +340,21 @@ type Application {
   name: String!
 }
 
+type Location {
+  name: String!
+}
+
 type Query {
   versions(orderBy: VersionOrderByInput): [Version!]!
   environments: [Environment!]!
   applications: [Application!]!
+  locations: [Location!]!
 }
 
 input NewVersion {
   application: String!
   environment: String!
+  location: String
   version: String!
 }
 
@@ -577,6 +613,50 @@ func (ec *executionContext) fieldContext_Environment_name(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Location_name(ctx context.Context, field graphql.CollectedField, obj *model.Location) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Location_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Location_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Location",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createVersion(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createVersion(ctx, field)
 	if err != nil {
@@ -622,6 +702,8 @@ func (ec *executionContext) fieldContext_Mutation_createVersion(ctx context.Cont
 				return ec.fieldContext_Version_application(ctx, field)
 			case "environment":
 				return ec.fieldContext_Version_environment(ctx, field)
+			case "location":
+				return ec.fieldContext_Version_location(ctx, field)
 			case "version":
 				return ec.fieldContext_Version_version(ctx, field)
 			case "timestamp":
@@ -748,6 +830,8 @@ func (ec *executionContext) fieldContext_Query_versions(ctx context.Context, fie
 				return ec.fieldContext_Version_application(ctx, field)
 			case "environment":
 				return ec.fieldContext_Version_environment(ctx, field)
+			case "location":
+				return ec.fieldContext_Version_location(ctx, field)
 			case "version":
 				return ec.fieldContext_Version_version(ctx, field)
 			case "timestamp":
@@ -861,6 +945,54 @@ func (ec *executionContext) fieldContext_Query_applications(ctx context.Context,
 				return ec.fieldContext_Application_name(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Application", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_locations(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_locations(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Locations(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Location)
+	fc.Result = res
+	return ec.marshalNLocation2ᚕᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐLocationᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_locations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "name":
+				return ec.fieldContext_Location_name(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Location", field.Name)
 		},
 	}
 	return fc, nil
@@ -1130,6 +1262,54 @@ func (ec *executionContext) fieldContext_Version_environment(ctx context.Context
 				return ec.fieldContext_Environment_name(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Environment", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Version_location(ctx context.Context, field graphql.CollectedField, obj *model.Version) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Version_location(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Location, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Location)
+	fc.Result = res
+	return ec.marshalNLocation2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐLocation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Version_location(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Version",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "name":
+				return ec.fieldContext_Location_name(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Location", field.Name)
 		},
 	}
 	return fc, nil
@@ -3003,7 +3183,7 @@ func (ec *executionContext) unmarshalInputNewVersion(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"application", "environment", "version"}
+	fieldsInOrder := [...]string{"application", "environment", "location", "version"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3023,6 +3203,14 @@ func (ec *executionContext) unmarshalInputNewVersion(ctx context.Context, obj in
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("environment"))
 			it.Environment, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "location":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("location"))
+			it.Location, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3047,7 +3235,7 @@ func (ec *executionContext) unmarshalInputVersionOrderByInput(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"application", "environment", "timestamp"}
+	fieldsInOrder := [...]string{"application", "environment", "location", "timestamp"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3067,6 +3255,14 @@ func (ec *executionContext) unmarshalInputVersionOrderByInput(ctx context.Contex
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("environment"))
 			it.Environment, err = ec.unmarshalOSort2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐSort(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "location":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("location"))
+			it.Location, err = ec.unmarshalOSort2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐSort(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3161,6 +3357,34 @@ func (ec *executionContext) _Environment(ctx context.Context, sel ast.SelectionS
 		case "name":
 
 			out.Values[i] = ec._Environment_name(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var locationImplementors = []string{"Location"}
+
+func (ec *executionContext) _Location(ctx context.Context, sel ast.SelectionSet, obj *model.Location) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, locationImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Location")
+		case "name":
+
+			out.Values[i] = ec._Location_name(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -3312,6 +3536,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "locations":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_locations(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "__type":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -3362,6 +3609,13 @@ func (ec *executionContext) _Version(ctx context.Context, sel ast.SelectionSet, 
 		case "environment":
 
 			out.Values[i] = ec._Version_environment(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "location":
+
+			out.Values[i] = ec._Version_location(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -3859,6 +4113,60 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNLocation2ᚕᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐLocationᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Location) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNLocation2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐLocation(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNLocation2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐLocation(ctx context.Context, sel ast.SelectionSet, v *model.Location) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Location(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNNewVersion2githubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐNewVersion(ctx context.Context, v interface{}) (model.NewVersion, error) {

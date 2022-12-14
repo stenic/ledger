@@ -13,6 +13,7 @@ type Version {
   id: ID!
   application: Application!
   environment: Environment!
+  location: Location!
   version: String!
   timestamp: String!
 }
@@ -20,6 +21,7 @@ type Version {
 input VersionOrderByInput {
   application: Sort
   environment: Sort
+  location: Sort
   timestamp: Sort
 }
 
@@ -31,15 +33,21 @@ type Application {
   name: String!
 }
 
+type Location {
+  name: String!
+}
+
 type Query {
   versions(orderBy: VersionOrderByInput): [Version!]!
   environments: [Environment!]!
   applications: [Application!]!
+  locations: [Location!]!
 }
 
 input NewVersion {
   application: String!
   environment: String!
+  location: String
   version: String!
 }
 
