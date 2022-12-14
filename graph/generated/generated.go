@@ -68,6 +68,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Applications func(childComplexity int) int
 		Environments func(childComplexity int) int
+		LastVersions func(childComplexity int) int
 		Locations    func(childComplexity int) int
 		Versions     func(childComplexity int, orderBy *model.VersionOrderByInput) int
 	}
@@ -91,6 +92,7 @@ type QueryResolver interface {
 	Environments(ctx context.Context) ([]*model.Environment, error)
 	Applications(ctx context.Context) ([]*model.Application, error)
 	Locations(ctx context.Context) ([]*model.Location, error)
+	LastVersions(ctx context.Context) ([]*model.Version, error)
 }
 
 type executableSchema struct {
@@ -173,6 +175,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Environments(childComplexity), true
+
+	case "Query.lastVersions":
+		if e.complexity.Query.LastVersions == nil {
+			break
+		}
+
+		return e.complexity.Query.LastVersions(childComplexity), true
 
 	case "Query.locations":
 		if e.complexity.Query.Locations == nil {
@@ -349,6 +358,7 @@ type Query {
   environments: [Environment!]!
   applications: [Application!]!
   locations: [Location!]!
+  lastVersions: [Version]!
 }
 
 input NewVersion {
@@ -993,6 +1003,64 @@ func (ec *executionContext) fieldContext_Query_locations(ctx context.Context, fi
 				return ec.fieldContext_Location_name(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Location", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_lastVersions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_lastVersions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().LastVersions(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Version)
+	fc.Result = res
+	return ec.marshalNVersion2ᚕᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersion(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_lastVersions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Version_id(ctx, field)
+			case "application":
+				return ec.fieldContext_Version_application(ctx, field)
+			case "environment":
+				return ec.fieldContext_Version_environment(ctx, field)
+			case "location":
+				return ec.fieldContext_Version_location(ctx, field)
+			case "version":
+				return ec.fieldContext_Version_version(ctx, field)
+			case "timestamp":
+				return ec.fieldContext_Version_timestamp(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Version", field.Name)
 		},
 	}
 	return fc, nil
@@ -3559,6 +3627,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "lastVersions":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_lastVersions(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "__type":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -4193,6 +4284,44 @@ func (ec *executionContext) marshalNVersion2githubᚗcomᚋstenicᚋledgerᚋgra
 	return ec._Version(ctx, sel, &v)
 }
 
+func (ec *executionContext) marshalNVersion2ᚕᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersion(ctx context.Context, sel ast.SelectionSet, v []*model.Version) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOVersion2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersion(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
 func (ec *executionContext) marshalNVersion2ᚕᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Version) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -4556,6 +4685,13 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOVersion2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersion(ctx context.Context, sel ast.SelectionSet, v *model.Version) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Version(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOVersionOrderByInput2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersionOrderByInput(ctx context.Context, v interface{}) (*model.VersionOrderByInput, error) {

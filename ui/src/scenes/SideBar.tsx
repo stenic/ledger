@@ -36,6 +36,11 @@ const menu = {
       to: "/versions",
     },
     {
+      title: "Last",
+      icon: <LibraryBooksIcon />,
+      to: "/last",
+    },
+    {
       title: "Feed",
       icon: <FormatListBulletedOutlinedIcon />,
       to: "/feed",

@@ -6,6 +6,7 @@ import Actions from "./scenes/Actions";
 import Dashboard from "./scenes/dashboard";
 import Settings from "./scenes/settings";
 import Versions from "./scenes/versions";
+import LastVersions from "./scenes/last";
 import Versions2 from "./scenes/versions2";
 import Profile from "./scenes/profile";
 import Chart from "./scenes/chart";
@@ -48,6 +49,7 @@ const App = () => {
               <Route path="/settings" element={<Settings />} />
               <Route path="/versions2" element={<Versions2 />} />
               <Route path="/versions" element={<Versions />} />
+              <Route path="/last" element={<LastVersions />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/feed" element={<Feed />} />
               <Route path="/chart" element={<Chart />} />

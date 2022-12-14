@@ -138,6 +138,27 @@ func (r *queryResolver) Locations(ctx context.Context) ([]*model.Location, error
 	return resultLinks, nil
 }
 
+// LastVersions is the resolver for the lastVersions field.
+func (r *queryResolver) LastVersions(ctx context.Context) ([]*model.Version, error) {
+	if user := auth.TokenFromContext(ctx); user == nil {
+		return nil, fmt.Errorf("access denield")
+	}
+
+	var resultLinks []*model.Version
+	for _, item := range versions.GetLast() {
+		resultLinks = append(resultLinks, &model.Version{
+			ID:          strconv.FormatInt(item.ID, 10),
+			Application: &model.Application{Name: item.Application},
+			Environment: &model.Environment{Name: item.Environment},
+			Location:    &model.Location{Name: item.Location},
+			Version:     item.Version,
+			Timestamp:   item.Timestamp,
+		})
+	}
+
+	return resultLinks, nil
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
