@@ -24,12 +24,13 @@ func (c *LedgerClient) PostNewVersion(app, location, env, version string) error 
 				createVersion(input: {
 					application: "%s",
 					environment: "%s",
-					version: "%s"
+					version: "%s",
+					location: "%s",
 				}) {
 					id
 				}
 			}
-		`, app, env, version),
+		`, app, env, version, location),
 	}
 	jsonValue, _ := json.Marshal(jsonData)
 	r := regexp.MustCompile(`(\\[tn]|\s+)`)

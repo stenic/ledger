@@ -61,14 +61,15 @@ func Run(endpoint, namespace, location string) {
 func getNotifyFunc(lc client.LedgerClient, location string) kubernetes.NotifyFunc {
 	return func(events []kubernetes.Event) error {
 		for _, e := range events {
-			logrus.WithFields(logrus.Fields{
-				"application": e.Application,
-				"environment": e.Environment,
-				"version":     e.Version,
-			}).Info("Notifying ledger")
 			if e.Location == "" {
 				e.Location = location
 			}
+			logrus.WithFields(logrus.Fields{
+				"application": e.Application,
+				"location":    e.Location,
+				"environment": e.Environment,
+				"version":     e.Version,
+			}).Info("Notifying ledger")
 			if err := lc.PostNewVersion(e.Application, e.Location, e.Environment, e.Version); err != nil {
 				logrus.Error(err)
 			}
