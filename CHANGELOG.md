@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/stenic/ledger/compare/v1.2.6...v1.3.0) (2022-12-14)
+
+
+### Bug Fixes
+
+* Allow setting location per agent ([b735431](https://github.com/stenic/ledger/commit/b735431f0c6a3f77ef0394b125df96931dee9a7a))
+
+
+### Features
+
+* Add location field ([2bcaf12](https://github.com/stenic/ledger/commit/2bcaf12d813bf4c659f4b60e516f7cf21facf07d))
+
 ## [1.2.6](https://github.com/stenic/ledger/compare/v1.2.5...v1.2.6) (2022-12-13)
 
 
