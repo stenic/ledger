@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/stenic/ledger/compare/v1.3.0...v1.3.1) (2022-12-14)
+
+
+### Bug Fixes
+
+* Handle location in PostNewVersion method ([dc74d58](https://github.com/stenic/ledger/commit/dc74d58a0da6ab030b816b8e2bf1a0d451ed51db))
+
 # [1.3.0](https://github.com/stenic/ledger/compare/v1.2.6...v1.3.0) (2022-12-14)
 
 
