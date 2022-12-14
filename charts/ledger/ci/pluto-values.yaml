@@ -3,3 +3,7 @@ ingress:
 
 autoscaling:
   enabled: true
+
+ledgerAgent:
+  enabled: true
+  token: dummy

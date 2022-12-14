@@ -121,6 +121,6 @@ ledgerAgent:
   endpoint: http://ledger-server
   location: ""
   namespaced: false
-  token: default
+  token:
   log:
     level: info
