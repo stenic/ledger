@@ -45,6 +45,11 @@ spec:
                 secretKeyRef:
                   key: endpoint
                   name: {{ include "ledger.fullname" . }}-agent
+            - name: LEDGER_LOCATION
+              valueFrom:
+                secretKeyRef:
+                  key: location
+                  name: {{ include "ledger.fullname" . }}-agent
             - name: TOKEN
               valueFrom:
                 secretKeyRef:
