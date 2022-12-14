@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/stenic/ledger/compare/v1.3.3...v1.4.0) (2022-12-14)
+
+
+### Features
+
+* **ui:** Add Last view ([2c231a6](https://github.com/stenic/ledger/commit/2c231a6d6887b692acec4701dc5ba91f997664bb)), closes [#16](https://github.com/stenic/ledger/issues/16)
+
 ## [1.3.3](https://github.com/stenic/ledger/compare/v1.3.2...v1.3.3) (2022-12-14)
 
 
