@@ -23,6 +23,8 @@ type Client struct {
 	clientset *kubernetes.Clientset
 }
 
+var startTime = time.Now()
+
 // NewClient creates Client object using local kubecfg
 func NewClient(kubeconfig string) (*Client, error) {
 	// creates the in-cluster config
@@ -120,13 +122,12 @@ func processObject(e watch.Event, objectMeta metav1.ObjectMeta, podTemplate v1.P
 
 	switch e.Type {
 	case watch.Added:
-		if objectMeta.CreationTimestamp.Time.Before(time.Now().Add(-1 * time.Minute)) {
-			// Skip processing if the object was created longer that 1 minute ago.
-			// Most likely we are starting up and getting all the objects a first time.
+		if objectMeta.CreationTimestamp.Time.Before(startTime) {
+			// Skip processing if the object was created before agent start.
 			logrus.WithFields(logrus.Fields{
 				"namespace": objectMeta.Namespace,
 				"name":      objectMeta.Name,
-			}).Debug("Skipping, assuming startup")
+			}).Debug("Skipping ADD, created before startup")
 			return nil
 		}
 		return collectObjectInfo(objectMeta, podTemplate)
@@ -137,7 +138,7 @@ func processObject(e watch.Event, objectMeta metav1.ObjectMeta, podTemplate v1.P
 			logrus.WithFields(logrus.Fields{
 				"namespace": objectMeta.Namespace,
 				"name":      objectMeta.Name,
-			}).Debug("Skipping, assuming deletion")
+			}).Debug("Skipping MOD, assuming deletion")
 			return nil
 		}
 		return collectObjectInfo(objectMeta, podTemplate)
