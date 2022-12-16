@@ -61,9 +61,6 @@ func (c *Client) WatchDeploymentEvents(ctx context.Context, namespace string, no
 				if !ok {
 					continue
 				}
-				if deployment.Generation == deployment.Status.ObservedGeneration {
-					continue
-				}
 				if ev := processObject(e, deployment.ObjectMeta, deployment.Spec.Template); ev != nil {
 					notifyFunc(ev)
 				}
@@ -94,9 +91,6 @@ func (c *Client) WatchStatefulsetEvents(ctx context.Context, namespace string, n
 				if !ok {
 					continue
 				}
-				if statefulset.Generation == statefulset.Status.ObservedGeneration {
-					continue
-				}
 				if ev := processObject(e, statefulset.ObjectMeta, statefulset.Spec.Template); ev != nil {
 					notifyFunc(ev)
 				}
@@ -110,7 +104,20 @@ func (c *Client) WatchStatefulsetEvents(ctx context.Context, namespace string, n
 	return nil
 }
 
+var cache = map[string]int64{}
+
 func processObject(e watch.Event, objectMeta metav1.ObjectMeta, podTemplate v1.PodTemplateSpec) []Event {
+	val, ok := cache[string(objectMeta.UID)]
+	if ok && val == objectMeta.Generation {
+		// Skip processing if the object was processed in the last 10 seconds.
+		logrus.WithFields(logrus.Fields{
+			"namespace": objectMeta.Namespace,
+			"name":      objectMeta.Name,
+		}).Trace("Skipping, recently processed")
+		return nil
+	}
+	cache[string(objectMeta.UID)] = objectMeta.Generation
+
 	switch e.Type {
 	case watch.Added:
 		if objectMeta.CreationTimestamp.Time.Before(time.Now().Add(-1 * time.Minute)) {
