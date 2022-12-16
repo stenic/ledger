@@ -104,7 +104,6 @@ const LastVersions = () => {
         }}
       >
         <DataGrid
-          checkboxSelection
           loading={isLoading}
           rows={data?.lastVersions ? data.lastVersions : []}
           columns={columns}
