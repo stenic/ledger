@@ -57,6 +57,11 @@ spec:
                   name: {{ include "ledger.fullname" . }}-agent
             - name: LEDGER_NAMESPACE
               value: {{ .Values.ledgerAgent.namespaced | ternary .Release.Namespace "" }}
+            - name: LOG_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  key: log-level
+                  name: {{ include "ledger.fullname" . }}-agent
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
