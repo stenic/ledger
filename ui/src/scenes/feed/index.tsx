@@ -11,6 +11,7 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import LinearProgress from "@mui/material/LinearProgress";
 import { VersionData } from "../../types/version";
+import moment from "moment";
 
 const Feed = () => {
   const { data, isLoading } = useGqlQuery(
@@ -62,14 +63,7 @@ const Feed = () => {
                         component="span"
                         color="text.primary"
                       >
-                        {new Date(version.timestamp).toLocaleDateString()}
-                      </Typography>{" "}
-                      <Typography
-                        sx={{ display: "inline" }}
-                        component="span"
-                        color="text.secondary"
-                      >
-                        {new Date(version.timestamp).toLocaleTimeString()}
+                        {moment(version.timestamp).format("llll")}
                       </Typography>
                     </React.Fragment>
                   }
