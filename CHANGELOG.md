@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.2](https://github.com/stenic/ledger/compare/v1.4.1...v1.4.2) (2022-12-16)
+
+
+### Bug Fixes
+
+* Remove checkboxes ([7594b83](https://github.com/stenic/ledger/commit/7594b83edbb9acf0c7646d23637c1957f2675aad))
+
 ## [1.4.1](https://github.com/stenic/ledger/compare/v1.4.0...v1.4.1) (2022-12-16)
 
 
