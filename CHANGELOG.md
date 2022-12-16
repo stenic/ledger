@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.3](https://github.com/stenic/ledger/compare/v1.4.2...v1.4.3) (2022-12-16)
+
+
+### Bug Fixes
+
+* Display timestamps in localized time ([48929d4](https://github.com/stenic/ledger/commit/48929d436b1601aa8456f2252c6547c27f4f9ccd))
+
 ## [1.4.2](https://github.com/stenic/ledger/compare/v1.4.1...v1.4.2) (2022-12-16)
 
 
