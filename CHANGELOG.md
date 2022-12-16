@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.1](https://github.com/stenic/ledger/compare/v1.4.0...v1.4.1) (2022-12-16)
+
+
+### Bug Fixes
+
+* **agent:** Fix change detection ([5a21cc8](https://github.com/stenic/ledger/commit/5a21cc8faf75484787eb624cf9130bd4abb99273))
+* **agent:** Improve change detection ([7e9c0b3](https://github.com/stenic/ledger/commit/7e9c0b331361fa471835393022cf4a62a6d10fb8))
+
 # [1.4.0](https://github.com/stenic/ledger/compare/v1.3.3...v1.4.0) (2022-12-14)
 
 
