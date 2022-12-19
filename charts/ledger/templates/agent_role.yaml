@@ -13,9 +13,9 @@ rules:
   - deployments
   - statefulsets
   verbs:
-  - watch
   - list
-  - patch
+  - watch
+  - update
 - apiGroups:
   - ""
   resources:
