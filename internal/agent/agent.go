@@ -25,7 +25,8 @@ func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 }
 
-func Run(endpoint, namespace, location string) {
+func Run(endpoint, namespace, envLocation string) {
+	location = envLocation
 	ctrl.SetLogger(logrusr.New(logrus.StandardLogger()))
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
