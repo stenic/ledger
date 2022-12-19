@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.11](https://github.com/stenic/ledger/compare/v1.4.10...v1.4.11) (2022-12-19)
+
+
+### Bug Fixes
+
+* Cleanup rest client logging ([b3f4657](https://github.com/stenic/ledger/commit/b3f46577fbc7747850b176f5e011144bff462635))
+
 ## [1.4.10](https://github.com/stenic/ledger/compare/v1.4.9...v1.4.10) (2022-12-19)
 
 
