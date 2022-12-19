@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.5](https://github.com/stenic/ledger/compare/v1.4.4...v1.4.5) (2022-12-19)
+
+
+### Bug Fixes
+
+* Add retry when contacting server ([30d4761](https://github.com/stenic/ledger/commit/30d4761bc417c846157e6452fe705fee995ead0d))
+* Improve logging ([936cbc0](https://github.com/stenic/ledger/commit/936cbc050882c66fd4c50b12f4bb167ba871c236))
+
 ## [1.4.4](https://github.com/stenic/ledger/compare/v1.4.3...v1.4.4) (2022-12-16)
 
 
