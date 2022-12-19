@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.6](https://github.com/stenic/ledger/compare/v1.4.5...v1.4.6) (2022-12-19)
+
+
+### Bug Fixes
+
+* Might fix watched ending ([d479e0c](https://github.com/stenic/ledger/commit/d479e0c57e2ae0a1a0886cbf2d3da417a21d6139))
+* Set correct logger ([2d85d75](https://github.com/stenic/ledger/commit/2d85d751dd6d32ca851ed87386dcfea7995ac4f4))
+
 ## [1.4.5](https://github.com/stenic/ledger/compare/v1.4.4...v1.4.5) (2022-12-19)
 
 
