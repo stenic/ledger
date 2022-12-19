@@ -1,4 +1,4 @@
-package kubernetes
+package agent
 
 // https://github.com/dtan4/k8s-pod-notifier/blob/master/kubernetes/client.go
 

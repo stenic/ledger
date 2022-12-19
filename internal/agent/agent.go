@@ -1,80 +1,103 @@
 package agent
 
 import (
-	"context"
-	"path/filepath"
-	"sync"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stenic/ledger/internal/client"
-	"github.com/stenic/ledger/internal/pkg/kubernetes"
 	"github.com/stenic/ledger/internal/pkg/utils/env"
-	"k8s.io/client-go/util/homedir"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+	ctrl "sigs.k8s.io/controller-runtime"
+
+	"github.com/bombsimon/logrusr/v4"
+	"k8s.io/apimachinery/pkg/runtime"
+	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+	"sigs.k8s.io/controller-runtime/pkg/healthz"
 )
 
-// https://github.com/dtan4/k8s-pod-notifier/blob/master/kubernetes/client.go
+var (
+	scheme   = runtime.NewScheme()
+	location = ""
+	lc       client.LedgerClient
+)
+
+func init() {
+	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
+}
 
 func Run(endpoint, namespace, location string) {
-	kubeconfigPath := filepath.Join(homedir.HomeDir(), ".kube", "config")
-
-	k8sClient, err := kubernetes.NewClient(kubeconfigPath)
+	ctrl.SetLogger(logrusr.New(logrus.StandardLogger()))
+	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
+		Scheme:                 scheme,
+		MetricsBindAddress:     ":8082",
+		Port:                   9443,
+		HealthProbeBindAddress: ":8081",
+		// LeaderElection:          true,
+		// LeaderElectionID:        "ledger.stenic.io",
+		// LeaderElectionNamespace: "ledger",
+	})
 	if err != nil {
 		logrus.Fatal(err)
 	}
-
-	var wg sync.WaitGroup
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel() // Make sure it's called to release resources even if no errors
 
 	tkn := env.GetString("TOKEN", "")
 	if tkn == "" {
 		logrus.Fatal("Please provide a TOKEN environment variable")
 	}
-
-	notify := getNotifyFunc(client.LedgerClient{
+	lc = client.LedgerClient{
 		Endpoint: endpoint + "/query",
 		Token:    tkn,
-	}, location)
-
-	wg.Add(1)
-	go func() {
-		logrus.Info("Watching for deployment changes")
-		if err := k8sClient.WatchDeploymentEvents(ctx, namespace, notify); err != nil {
-			logrus.Error(err)
-			cancel()
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		logrus.Info("Watching for statefulset changes")
-		if err := k8sClient.WatchStatefulsetEvents(ctx, namespace, notify); err != nil {
-			logrus.Error(err)
-			cancel()
-		}
-	}()
-
-	wg.Wait()
-}
-
-func getNotifyFunc(lc client.LedgerClient, location string) kubernetes.NotifyFunc {
-	return func(events []kubernetes.Event) error {
-		for _, e := range events {
-			if e.Location == "" {
-				e.Location = location
-			}
-			logrus.WithFields(logrus.Fields{
-				"application": e.Application,
-				"location":    e.Location,
-				"environment": e.Environment,
-				"version":     e.Version,
-			}).Info("Notifying ledger")
-			if err := lc.PostNewVersion(e.Application, e.Location, e.Environment, e.Version); err != nil {
-				logrus.Error(err)
-			}
-		}
-		return nil
 	}
 
+	interval := 5 * time.Second
+
+	if err = (&LedgerStatefulsetReconciler{
+		Client:      mgr.GetClient(),
+		Scheme:      mgr.GetScheme(),
+		RefreshRate: interval,
+		Recorder:    mgr.GetEventRecorderFor("ledger"),
+	}).SetupWithManager(mgr); err != nil {
+		logrus.Fatal(err)
+	}
+
+	if err = (&LedgerDeploymemtReconciler{
+		Client:      mgr.GetClient(),
+		Scheme:      mgr.GetScheme(),
+		RefreshRate: interval,
+		Recorder:    mgr.GetEventRecorderFor("ledger"),
+	}).SetupWithManager(mgr); err != nil {
+		logrus.Fatal(err)
+	}
+
+	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
+		logrus.Fatal(err, "unable to set up health check")
+	}
+	if err := mgr.AddReadyzCheck("readyz", healthz.Ping); err != nil {
+		logrus.Fatal(err, "unable to set up ready check")
+	}
+
+	logrus.Info("starting manager")
+	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
+		logrus.Fatal(err, "problem running manager")
+	}
+}
+
+func notify(events []Event) error {
+	for _, e := range events {
+		if e.Location == "" {
+			e.Location = location
+		}
+		logrus.WithFields(logrus.Fields{
+			"application": e.Application,
+			"location":    e.Location,
+			"environment": e.Environment,
+			"version":     e.Version,
+		}).Info("Notifying ledger")
+		if err := lc.PostNewVersion(e.Application, e.Location, e.Environment, e.Version); err != nil {
+			logrus.Error(err)
+			return err
+		}
+	}
+
+	return nil
 }

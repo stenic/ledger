@@ -11,6 +11,8 @@ import (
 
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/sirupsen/logrus"
+
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 type LedgerClient struct {
@@ -62,5 +64,18 @@ func (c *LedgerClient) PostNewVersion(app, location, env, version string) error 
 	body, err := ioutil.ReadAll(response.Body)
 	logrus.Tracef("Response: %s", string(body))
 
+	var resp = gqlResponse{}
+	if err := json.Unmarshal(body, &resp); err != nil {
+		return err
+	}
+
+	if len(resp.Errors) > 0 {
+		return fmt.Errorf(resp.Errors.Error())
+	}
+
 	return err
+}
+
+type gqlResponse struct {
+	Errors gqlerror.List `json:"errors"`
 }
