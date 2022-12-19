@@ -64,7 +64,9 @@ func (c *Client) WatchDeploymentEvents(ctx context.Context, namespace string, no
 					continue
 				}
 				if ev := processObject(e, deployment.ObjectMeta, deployment.Spec.Template); ev != nil {
-					notifyFunc(ev)
+					if err := notifyFunc(ev); err != nil {
+						logrus.Error(err)
+					}
 				}
 			case <-ctx.Done():
 				watcher.Stop()
@@ -94,7 +96,9 @@ func (c *Client) WatchStatefulsetEvents(ctx context.Context, namespace string, n
 					continue
 				}
 				if ev := processObject(e, statefulset.ObjectMeta, statefulset.Spec.Template); ev != nil {
-					notifyFunc(ev)
+					if err := notifyFunc(ev); err != nil {
+						logrus.Error(err)
+					}
 				}
 			case <-ctx.Done():
 				watcher.Stop()
@@ -113,9 +117,10 @@ func processObject(e watch.Event, objectMeta metav1.ObjectMeta, podTemplate v1.P
 	if ok && val == objectMeta.Generation {
 		// Skip processing if the object was processed in the last 10 seconds.
 		logrus.WithFields(logrus.Fields{
-			"namespace": objectMeta.Namespace,
-			"name":      objectMeta.Name,
-		}).Tracef("Skipping, recently processed %s", &objectMeta.Generation)
+			"namespace":  objectMeta.Namespace,
+			"name":       objectMeta.Name,
+			"generation": objectMeta.Generation,
+		}).Trace("Skipping, recently processed")
 		return nil
 	}
 	cache[string(objectMeta.UID)] = objectMeta.Generation
@@ -125,8 +130,9 @@ func processObject(e watch.Event, objectMeta metav1.ObjectMeta, podTemplate v1.P
 		if objectMeta.CreationTimestamp.Time.Before(startTime) {
 			// Skip processing if the object was created before agent start.
 			logrus.WithFields(logrus.Fields{
-				"namespace": objectMeta.Namespace,
-				"name":      objectMeta.Name,
+				"namespace":  objectMeta.Namespace,
+				"name":       objectMeta.Name,
+				"generation": objectMeta.Generation,
 			}).Debug("Skipping ADD, created before startup")
 			return nil
 		}
@@ -136,8 +142,9 @@ func processObject(e watch.Event, objectMeta metav1.ObjectMeta, podTemplate v1.P
 		if objectMeta.DeletionTimestamp != nil {
 			// Skip if we are deleting the resource
 			logrus.WithFields(logrus.Fields{
-				"namespace": objectMeta.Namespace,
-				"name":      objectMeta.Name,
+				"namespace":  objectMeta.Namespace,
+				"name":       objectMeta.Name,
+				"generation": objectMeta.Generation,
 			}).Debug("Skipping MOD, assuming deletion")
 			return nil
 		}

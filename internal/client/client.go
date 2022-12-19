@@ -33,7 +33,10 @@ func (c *LedgerClient) PostNewVersion(app, location, env, version string) error 
 			}
 		`, app, env, version, location),
 	}
-	jsonValue, _ := json.Marshal(jsonData)
+	jsonValue, err := json.Marshal(jsonData)
+	if err != nil {
+		return err
+	}
 	r := regexp.MustCompile(`(\\[tn]|\s+)`)
 	logrus.Tracef("Payload: %s", r.ReplaceAllString(string(jsonValue), ""))
 
