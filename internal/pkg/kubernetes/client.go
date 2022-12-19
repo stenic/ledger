@@ -57,7 +57,7 @@ func (c *Client) WatchDeploymentEvents(ctx context.Context, namespace string, no
 			select {
 			case e := <-watcher.ResultChan():
 				if e.Object == nil {
-					return
+					continue
 				}
 				deployment, ok := e.Object.(*v1apps.Deployment)
 				if !ok {
@@ -89,7 +89,7 @@ func (c *Client) WatchStatefulsetEvents(ctx context.Context, namespace string, n
 			select {
 			case e := <-watcher.ResultChan():
 				if e.Object == nil {
-					return
+					continue
 				}
 				statefulset, ok := e.Object.(*v1apps.StatefulSet)
 				if !ok {
