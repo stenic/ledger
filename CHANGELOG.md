@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.8](https://github.com/stenic/ledger/compare/v1.4.7...v1.4.8) (2022-12-19)
+
+
+### Bug Fixes
+
+* Controller permissions ([8829376](https://github.com/stenic/ledger/commit/8829376d8e654a5fff1d52ec64ee8821f4199d4d))
+
 ## [1.4.7](https://github.com/stenic/ledger/compare/v1.4.6...v1.4.7) (2022-12-19)
 
 
