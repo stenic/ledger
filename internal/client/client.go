@@ -52,7 +52,7 @@ func (c *LedgerClient) PostNewVersion(app, location, env, version string) error 
 	retryClient := retryablehttp.NewClient()
 	retryClient.RetryMax = 10
 	retryClient.Backoff = retryablehttp.DefaultBackoff
-	retryClient.Logger = logrus.StandardLogger()
+	retryClient.Logger = nil
 	httpClient := retryClient.StandardClient()
 	httpClient.Timeout = time.Second * 10
 	response, err := httpClient.Do(request)
