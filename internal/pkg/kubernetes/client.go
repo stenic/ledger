@@ -115,7 +115,7 @@ func processObject(e watch.Event, objectMeta metav1.ObjectMeta, podTemplate v1.P
 		logrus.WithFields(logrus.Fields{
 			"namespace": objectMeta.Namespace,
 			"name":      objectMeta.Name,
-		}).Trace("Skipping, recently processed")
+		}).Tracef("Skipping, recently processed %s", &objectMeta.Generation)
 		return nil
 	}
 	cache[string(objectMeta.UID)] = objectMeta.Generation

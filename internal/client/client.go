@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/sirupsen/logrus"
 )
 
@@ -43,8 +44,12 @@ func (c *LedgerClient) PostNewVersion(app, location, env, version string) error 
 		return err
 	}
 
-	client := &http.Client{Timeout: time.Second * 10}
-	response, err := client.Do(request)
+	retryClient := retryablehttp.NewClient()
+	retryClient.RetryMax = 10
+	retryClient.Backoff = retryablehttp.DefaultBackoff
+	httpClient := retryClient.StandardClient()
+	httpClient.Timeout = time.Second * 10
+	response, err := httpClient.Do(request)
 	if err != nil {
 		return err
 	}
