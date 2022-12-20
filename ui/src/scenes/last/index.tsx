@@ -4,7 +4,6 @@ import Header from "../../components/Header";
 import { useGqlQuery } from "../../utils/http";
 import gql from "graphql-tag";
 import { VersionData } from "../../types/version";
-import moment from "moment";
 
 const LastVersions = () => {
   const { data, isLoading } = useGqlQuery(
@@ -64,8 +63,7 @@ const LastVersions = () => {
       headerName: "Date",
       flex: 1,
       type: "dateTime",
-      valueGetter: ({ value }: { value: string }) =>
-        value && moment(value).format("llll"),
+      valueGetter: ({ value }: { value: string }) => value && new Date(value),
     },
   ];
 
