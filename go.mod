@@ -65,7 +65,7 @@ require (
 
 require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
-	github.com/bombsimon/logrusr v1.1.0
+	github.com/bombsimon/logrusr/v4 v4.0.0
 	github.com/bombsimon/logrusr/v4 v4.0.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
