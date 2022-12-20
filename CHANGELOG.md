@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.12](https://github.com/stenic/ledger/compare/v1.4.11...v1.4.12) (2022-12-20)
+
+
+### Bug Fixes
+
+* Revert local times ([e44df39](https://github.com/stenic/ledger/commit/e44df39fe30ee5e7278e7552eb6b008398a8a86c))
+
 ## [1.4.11](https://github.com/stenic/ledger/compare/v1.4.10...v1.4.11) (2022-12-19)
 
 
