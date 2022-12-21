@@ -36,10 +36,6 @@ func (r *LedgerStatefulsetReconciler) Reconcile(ctx context.Context, req ctrl.Re
 			return ctrl.Result{}, err
 		}
 
-		if causedByScaling(ctx, r.Client, &statefulset) {
-			return ctrl.Result{}, nil
-		}
-
 		if err := processObject(statefulset.ObjectMeta, statefulset.Spec.Template); err != nil {
 			logrus.Error(err)
 			r.Recorder.Event(&statefulset, "Warning", "Notified", fmt.Sprintf("Ledger notified failed - %s", err))

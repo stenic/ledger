@@ -36,10 +36,6 @@ func (r *LedgerDeploymemtReconciler) Reconcile(ctx context.Context, req ctrl.Req
 			return ctrl.Result{}, err
 		}
 
-		if causedByScaling(ctx, r.Client, &deploy) {
-			return ctrl.Result{}, nil
-		}
-
 		if err := processObject(deploy.ObjectMeta, deploy.Spec.Template); err != nil {
 			logrus.Error(err)
 			r.Recorder.Event(&deploy, "Warning", "Notified", fmt.Sprintf("Ledger notified failed - %s", err))
