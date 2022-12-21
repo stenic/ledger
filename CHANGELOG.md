@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.4](https://github.com/stenic/ledger/compare/v1.5.3...v1.5.4) (2022-12-21)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/auth0/go-jwt-middleware/v2 to v2.1.0 ([#5](https://github.com/stenic/ledger/issues/5)) ([1a5a7a3](https://github.com/stenic/ledger/commit/1a5a7a36ad448f7530762979008f6bbae4a7cf17))
+* **deps:** update module github.com/bombsimon/logrusr to v4 ([#19](https://github.com/stenic/ledger/issues/19)) ([ae813f0](https://github.com/stenic/ledger/commit/ae813f013a2fbb98ccc68f31ecd1c3776cf1f0b6))
+* **deps:** update module golang.org/x/crypto to v0.4.0 ([#7](https://github.com/stenic/ledger/issues/7)) ([a26d25f](https://github.com/stenic/ledger/commit/a26d25fed288e904bb75d08fda6de17c32c00584))
+* **deps:** update module sigs.k8s.io/controller-runtime to v0.14.1 ([#18](https://github.com/stenic/ledger/issues/18)) ([8033401](https://github.com/stenic/ledger/commit/803340121a0b2f5295ddabd42d6b46db3f6dae9f))
+* Permissions ([bb1ae3d](https://github.com/stenic/ledger/commit/bb1ae3df82b3b1791bb87d8db36337b20cdd6f81))
+
 ## [1.5.3](https://github.com/stenic/ledger/compare/v1.5.2...v1.5.3) (2022-12-21)
 
 
