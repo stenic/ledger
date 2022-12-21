@@ -27,12 +27,17 @@ func (r *LedgerStatefulsetReconciler) Reconcile(ctx context.Context, req ctrl.Re
 	if err := r.Get(ctx, req.NamespacedName, &statefulset); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
+
 	val, hasAnnotation := statefulset.Annotations[ledgerAnnotationProcessedGen]
 	currGen := strconv.FormatInt(statefulset.Generation, 10)
 	if !hasAnnotation || val != currGen {
 		statefulset.Annotations[ledgerAnnotationProcessedGen] = strconv.FormatInt(statefulset.Generation+1, 10)
 		if err := r.Update(ctx, &statefulset); err != nil {
 			return ctrl.Result{}, err
+		}
+
+		if causedByScaling(ctx, r.Client, &statefulset) {
+			return ctrl.Result{}, nil
 		}
 
 		if err := processObject(statefulset.ObjectMeta, statefulset.Spec.Template); err != nil {

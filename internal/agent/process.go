@@ -29,7 +29,7 @@ func processObject(objectMeta metav1.ObjectMeta, podTemplate v1.PodTemplateSpec)
 			"namespace":  objectMeta.Namespace,
 			"name":       objectMeta.Name,
 			"generation": objectMeta.Generation,
-		}).Debug("Skipping MOD, assuming deletion")
+		}).Debug("Skipping, assuming deletion")
 
 		return nil
 	}

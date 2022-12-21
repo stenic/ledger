@@ -27,12 +27,17 @@ func (r *LedgerDeploymemtReconciler) Reconcile(ctx context.Context, req ctrl.Req
 	if err := r.Get(ctx, req.NamespacedName, &deploy); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
+
 	val, hasAnnotation := deploy.Annotations[ledgerAnnotationProcessedGen]
 	currGen := strconv.FormatInt(deploy.Generation, 10)
 	if !hasAnnotation || val != currGen {
 		deploy.Annotations[ledgerAnnotationProcessedGen] = strconv.FormatInt(deploy.Generation+1, 10)
 		if err := r.Update(ctx, &deploy); err != nil {
 			return ctrl.Result{}, err
+		}
+
+		if causedByScaling(ctx, r.Client, &deploy) {
+			return ctrl.Result{}, nil
 		}
 
 		if err := processObject(deploy.ObjectMeta, deploy.Spec.Template); err != nil {
