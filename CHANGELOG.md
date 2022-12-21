@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.1](https://github.com/stenic/ledger/compare/v1.5.0...v1.5.1) (2022-12-21)
+
+
+### Bug Fixes
+
+* Correct filter ([cb9f200](https://github.com/stenic/ledger/commit/cb9f200e2c4057346d5d530210c77fb97bf496fc))
+
 # [1.5.0](https://github.com/stenic/ledger/compare/v1.4.12...v1.5.0) (2022-12-21)
 
 
