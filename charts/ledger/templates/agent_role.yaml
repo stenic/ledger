@@ -21,6 +21,7 @@ rules:
   resources:
   - events
   verbs:
+  - list
   - create
   - patch
 {{- end }}
