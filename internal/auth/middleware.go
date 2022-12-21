@@ -15,8 +15,9 @@ import (
 type localJwtClaims struct{}
 
 type ApiSecurityOptions struct {
-	IssuerURL string `json:"authority"`
-	ClientID  string `json:"client_id"`
+	IssuerURL string   `json:"authority"`
+	ClientID  string   `json:"client_id"`
+	Audience  []string `json:"-"`
 }
 
 type CustomClaims struct {
@@ -32,7 +33,7 @@ func JwtHandler(opts ApiSecurityOptions) gin.HandlerFunc {
 
 	var jwtOidcMiddleware *jwtmiddleware.JWTMiddleware
 	if opts.IssuerURL != "" {
-		jwtOidcMiddleware = getOidcValidator(opts.IssuerURL)
+		jwtOidcMiddleware = getOidcValidator(opts.IssuerURL, opts.Audience)
 	}
 
 	return func(c *gin.Context) {

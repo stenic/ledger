@@ -12,7 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func getOidcValidator(issuerURLString string) *jwtmiddleware.JWTMiddleware {
+func getOidcValidator(issuerURLString string, audience []string) *jwtmiddleware.JWTMiddleware {
 	issuerURL, err := url.Parse(issuerURLString)
 	if err != nil {
 		log.Fatal(err)
@@ -40,7 +40,7 @@ func getOidcValidator(issuerURLString string) *jwtmiddleware.JWTMiddleware {
 		provider.KeyFunc,
 		validator.RS256,
 		issuerURL.String(),
-		[]string{},
+		audience,
 		// validator.WithAllowedClockSkew(30*time.Second),
 
 		validator.WithCustomClaims(customClaims),

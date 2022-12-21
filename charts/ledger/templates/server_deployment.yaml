@@ -68,6 +68,11 @@ spec:
                 secretKeyRef:
                   key: oidc-client-id
                   name: {{ include "ledger.fullname" . }}-server
+            - name: OIDC_AUDIENCE
+              valueFrom:
+                secretKeyRef:
+                  key: oidc-audience
+                  name: {{ include "ledger.fullname" . }}-server
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:

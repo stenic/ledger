@@ -109,6 +109,7 @@ ledgerServer:
   oidc:
     issuerURL: https://[keycloak-url]/auth/realms/[realm-name]
     clientID: ledger
+    audience: "account"
   jwt:
     secret: ""
   mysql:

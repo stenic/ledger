@@ -56,6 +56,7 @@ func (s *Server) Listen(addr string) error {
 	oidcOptions := auth.ApiSecurityOptions{
 		IssuerURL: s.ServerOpts.OidcIssuerURL,
 		ClientID:  s.ServerOpts.OidcClientID,
+		Audience:  s.ServerOpts.OidcAudience,
 	}
 
 	if os.Getenv("DEBUG") == "true" {

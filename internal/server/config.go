@@ -6,4 +6,5 @@ type ServerOpts struct {
 	EnableGZip      bool
 	OidcIssuerURL   string
 	OidcClientID    string
+	OidcAudience    []string
 }

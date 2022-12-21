@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/stenic/ledger/internal/pkg/utils/env"
@@ -14,6 +16,7 @@ func NewServerCmd() *cobra.Command {
 		staticAssetPath string
 		oidcIssuerURL   string
 		oidcClientID    string
+		oidcAudience    string
 	)
 
 	serverCommand := &cobra.Command{
@@ -29,6 +32,7 @@ func NewServerCmd() *cobra.Command {
 				StaticAssetPath: staticAssetPath,
 				OidcIssuerURL:   oidcIssuerURL,
 				OidcClientID:    oidcClientID,
+				OidcAudience:    strings.Split(oidcAudience, ","),
 			}
 
 			errors.CheckError(server.NewServer(opts).Listen(listenAddr))
@@ -39,6 +43,7 @@ func NewServerCmd() *cobra.Command {
 	serverCommand.Flags().StringVar(&listenAddr, "addr", env.GetString("PORT", ":8080"), "Listen on given port")
 	serverCommand.Flags().StringVar(&oidcIssuerURL, "oidc-issuer-url", env.GetString("OIDC_ISSUER_URL", ""), "")
 	serverCommand.Flags().StringVar(&oidcClientID, "oidc-client-id", env.GetString("OIDC_CLIENT_ID", ""), "")
+	serverCommand.Flags().StringVar(&oidcAudience, "oidc-audience", env.GetString("OIDC_AUDIENCE", ""), "")
 
 	return serverCommand
 }
