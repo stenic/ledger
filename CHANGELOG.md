@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.2](https://github.com/stenic/ledger/compare/v1.5.1...v1.5.2) (2022-12-21)
+
+
+### Bug Fixes
+
+* Correct event list permissions ([6fe7619](https://github.com/stenic/ledger/commit/6fe7619d81756a14df606573c30a6dd537da926c))
+
 ## [1.5.1](https://github.com/stenic/ledger/compare/v1.5.0...v1.5.1) (2022-12-21)
 
 
