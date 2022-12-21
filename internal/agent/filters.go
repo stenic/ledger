@@ -17,7 +17,7 @@ func causedByScaling(ctx context.Context, k8sClient client.Client, obj client.Ob
 			"involvedObject.kind":      obj.GetObjectKind().GroupVersionKind().Kind,
 			"involvedObject.name":      obj.GetName(),
 			"involvedObject.namespace": obj.GetNamespace(),
-			"reason":                   "ScalingReplicaSet",
+			"source.component":         "horizontal-pod-autoscaler",
 		}),
 	})
 	for _, e := range events.Items {
@@ -25,7 +25,7 @@ func causedByScaling(ctx context.Context, k8sClient client.Client, obj client.Ob
 			logrus.WithFields(logrus.Fields{
 				"namespace": obj.GetNamespace(),
 				"name":      obj.GetName(),
-			}).Debug("Skipping, caused by ScalingReplicaSet")
+			}).Debug("Skipping, caused by horizontal-pod-autoscaler")
 			return true
 		}
 	}
