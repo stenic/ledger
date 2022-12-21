@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.5](https://github.com/stenic/ledger/compare/v1.5.4...v1.5.5) (2022-12-21)
+
+
+### Bug Fixes
+
+* Require audience ([01bc9fb](https://github.com/stenic/ledger/commit/01bc9fb340565443a88cd6296f600b5508258de8))
+
 ## [1.5.4](https://github.com/stenic/ledger/compare/v1.5.3...v1.5.4) (2022-12-21)
 
 
