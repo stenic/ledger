@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/stenic/ledger/compare/v1.4.12...v1.5.0) (2022-12-21)
+
+
+### Features
+
+* Ignore ScalingReplicaSet ([c514452](https://github.com/stenic/ledger/commit/c5144526e1c52f23950269918e90de6d2d8ef279))
+
 ## [1.4.12](https://github.com/stenic/ledger/compare/v1.4.11...v1.4.12) (2022-12-20)
 
 
