@@ -21,7 +21,7 @@ rules:
   resources:
   - events
   verbs:
-  - get
+  - watch
   - list
   - create
   - patch
