@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.7](https://github.com/stenic/ledger/compare/v1.5.6...v1.5.7) (2022-12-25)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/gin-gonic/gin to v1.8.2 ([#20](https://github.com/stenic/ledger/issues/20)) ([2907c0f](https://github.com/stenic/ledger/commit/2907c0f35c01025ff44f072d4b095000ddbe0aaa))
+
 ## [1.5.6](https://github.com/stenic/ledger/compare/v1.5.5...v1.5.6) (2022-12-21)
 
 
