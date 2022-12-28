@@ -62,6 +62,26 @@ func (v Version) Save() int64 {
 	return id
 }
 
+func GetLast(location, environment, application string) *Version {
+	stmtFind, err := storage.Db.Prepare("SELECT id, application, environment, location, version, timestamp FROM versions WHERE location = ? AND environment = ? AND application = ? ORDER BY id DESC LIMIT 1")
+	if row := stmtFind.QueryRow(location, environment, application); err == nil && row != nil {
+		version := Version{}
+		err := row.Scan(
+			&version.ID,
+			&version.Application,
+			&version.Environment,
+			&version.Location,
+			&version.Version,
+			&version.Timestamp,
+		)
+		if err != nil {
+			return &version
+		}
+	}
+
+	return nil
+}
+
 func GetAll(opts ...query.QueryOpts) []Version {
 	q := query.AddQueryParts("select id, application, environment, location, version, timestamp from versions", opts...)
 	versions, err := runQuery(q)
@@ -71,7 +91,7 @@ func GetAll(opts ...query.QueryOpts) []Version {
 	return versions
 }
 
-func GetLast() []Version {
+func GetAllLast() []Version {
 	q := query.AddQueryParts("select id, application, environment, location, version, timestamp from versions where id in (select max(id) from versions group by location, environment, application)")
 	versions, err := runQuery(q)
 	if err != nil {
