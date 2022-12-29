@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -76,6 +77,12 @@ type UserInfo struct {
 }
 
 func TokenFromContext(ctx context.Context) *UserInfo {
+	if os.Getenv("AUTH_INSECURE") == "yes" {
+		logrus.Error("Skipping auth, hope you are in dev mode.")
+		return &UserInfo{
+			Username: "Insecure user",
+		}
+	}
 	if raw, valid := ctx.Value(localJwtClaims{}).(*Claims); valid {
 		return &UserInfo{
 			Username: raw.Username,

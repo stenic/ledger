@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stenic/ledger/graph/generated"
 	"github.com/stenic/ledger/graph/model"
 	"github.com/stenic/ledger/internal/auth"
@@ -36,9 +37,20 @@ func (r *mutationResolver) CreateVersion(ctx context.Context, input model.NewVer
 		Location:    location,
 		Version:     input.Version,
 	}
-	versionID := version.Save()
+	if v := versions.GetLast(*input.Location, input.Environment, input.Application); v != nil && v.Version == version.Version {
+		logrus.WithFields(logrus.Fields{
+			"location":    v.Location,
+			"environment": v.Environment,
+			"application": v.Application,
+			"version":     v.Version,
+		}).Debug("Skipping, last instance had same version")
+		version = *v
+	} else {
+		version.ID = version.Save()
+	}
+
 	return &model.Version{
-		ID:          strconv.FormatInt(versionID, 10),
+		ID:          strconv.FormatInt(version.ID, 10),
 		Application: &model.Application{Name: version.Application},
 		Environment: &model.Environment{Name: version.Environment},
 		Location:    &model.Location{Name: version.Location},
@@ -101,6 +113,7 @@ func (r *queryResolver) Environments(ctx context.Context) ([]*model.Environment,
 	if user := auth.TokenFromContext(ctx); user == nil {
 		return nil, fmt.Errorf("access denield")
 	}
+
 	var resultLinks []*model.Environment
 	for _, item := range environments.GetAll() {
 		resultLinks = append(resultLinks, &model.Environment{
@@ -115,6 +128,7 @@ func (r *queryResolver) Applications(ctx context.Context) ([]*model.Application,
 	if user := auth.TokenFromContext(ctx); user == nil {
 		return nil, fmt.Errorf("access denield")
 	}
+
 	var resultLinks []*model.Application
 	for _, item := range applications.GetAll() {
 		resultLinks = append(resultLinks, &model.Application{
@@ -129,6 +143,7 @@ func (r *queryResolver) Locations(ctx context.Context) ([]*model.Location, error
 	if user := auth.TokenFromContext(ctx); user == nil {
 		return nil, fmt.Errorf("access denield")
 	}
+
 	var resultLinks []*model.Location
 	for _, item := range locations.GetAll() {
 		resultLinks = append(resultLinks, &model.Location{
@@ -145,7 +160,7 @@ func (r *queryResolver) LastVersions(ctx context.Context) ([]*model.Version, err
 	}
 
 	var resultLinks []*model.Version
-	for _, item := range versions.GetLast() {
+	for _, item := range versions.GetAllLast() {
 		resultLinks = append(resultLinks, &model.Version{
 			ID:          strconv.FormatInt(item.ID, 10),
 			Application: &model.Application{Name: item.Application},
@@ -157,6 +172,36 @@ func (r *queryResolver) LastVersions(ctx context.Context) ([]*model.Version, err
 	}
 
 	return resultLinks, nil
+}
+
+// VersionCountPerDay is the resolver for the versionCountPerDay field.
+func (r *queryResolver) VersionCountPerDay(ctx context.Context) ([]*model.DateVersionCount, error) {
+	if user := auth.TokenFromContext(ctx); user == nil {
+		return nil, fmt.Errorf("access denield")
+	}
+
+	var results []*model.DateVersionCount
+	for _, item := range versions.CountByDay() {
+		results = append(results, &model.DateVersionCount{
+			Timstamp: item.Timestamp,
+			Count:    item.Count,
+		})
+	}
+
+	return results, nil
+}
+
+// TotalVersions is the resolver for the totalVersions field.
+func (r *queryResolver) TotalVersions(ctx context.Context) (int, error) {
+	if user := auth.TokenFromContext(ctx); user == nil {
+		return -1, fmt.Errorf("access denield")
+	}
+
+	if count := versions.CountTotal(); count != nil {
+		return *count, nil
+	}
+
+	return -1, fmt.Errorf("failed to get total count")
 }
 
 // Mutation returns generated.MutationResolver implementation.

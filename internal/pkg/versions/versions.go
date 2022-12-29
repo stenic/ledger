@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stenic/ledger/internal/pkg/query"
 	"github.com/stenic/ledger/internal/storage"
 )
@@ -77,6 +78,43 @@ func GetLast(location, environment, application string) *Version {
 		if err != nil {
 			return &version
 		}
+	}
+
+	return nil
+}
+
+type CountResult struct {
+	Timestamp string
+	Count     int
+}
+
+func CountByDay() []CountResult {
+	rows, err := storage.Db.Query("SELECT count(id), DATE(`timestamp`) AS date_formatted FROM versions GROUP BY date_formatted")
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer rows.Close()
+
+	var items []CountResult
+	for rows.Next() {
+		var item CountResult
+		err := rows.Scan(&item.Count, &item.Timestamp)
+		if err != nil {
+			log.Fatal(err)
+		}
+		items = append(items, item)
+	}
+
+	return items
+}
+
+func CountTotal() *int {
+	if row := storage.Db.QueryRow("SELECT count(id) FROM versions"); row != nil {
+		var count int
+		if err := row.Scan(&count); err != nil {
+			logrus.Fatal(err)
+		}
+		return &count
 	}
 
 	return nil

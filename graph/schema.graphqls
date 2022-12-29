@@ -37,12 +37,19 @@ type Location {
   name: String!
 }
 
+type DateVersionCount {
+  timstamp: String!
+  count: Int!
+}
+
 type Query {
   versions(orderBy: VersionOrderByInput): [Version!]!
   environments: [Environment!]!
   applications: [Application!]!
   locations: [Location!]!
   lastVersions: [Version]!
+  versionCountPerDay: [DateVersionCount]!
+  totalVersions: Int!
 }
 
 input NewVersion {

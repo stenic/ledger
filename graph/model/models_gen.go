@@ -16,6 +16,11 @@ type AuthPayload struct {
 	Token string `json:"token"`
 }
 
+type DateVersionCount struct {
+	Timstamp string `json:"timstamp"`
+	Count    int    `json:"count"`
+}
+
 type Environment struct {
 	Name string `json:"name"`
 }
