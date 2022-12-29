@@ -130,9 +130,6 @@ const Dashboard = () => {
             gridColumn: "span 8",
           }}
         >
-          <FlexBetween>
-            <Typography variant="h6">Heatmap</Typography>
-          </FlexBetween>
           <Timeline />
         </Box>
         <StatBox
