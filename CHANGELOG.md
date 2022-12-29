@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/stenic/ledger/compare/v1.5.7...v1.6.0) (2022-12-29)
+
+
+### Bug Fixes
+
+* Better logs ([117982e](https://github.com/stenic/ledger/commit/117982e4c5feb91e5bfa2e87c3e0d64bb2578814))
+* **deps:** update dependency @types/jest to v29 ([#10](https://github.com/stenic/ledger/issues/10)) ([ddd7637](https://github.com/stenic/ledger/commit/ddd7637119d697101b6089650059897ad9610cec))
+* **deps:** update dependency web-vitals to v3 ([#12](https://github.com/stenic/ledger/issues/12)) ([9fb3760](https://github.com/stenic/ledger/commit/9fb37605ff308b9a432843947a405a62f575f7e3))
+
+
+### Features
+
+* Fill dashboard ([558e5c5](https://github.com/stenic/ledger/commit/558e5c5334800a198e93d75c175ae17e0ce12190))
+
 ## [1.5.7](https://github.com/stenic/ledger/compare/v1.5.6...v1.5.7) (2022-12-25)
 
 
