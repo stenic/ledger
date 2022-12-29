@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.4](https://github.com/stenic/ledger/compare/v1.6.3...v1.6.4) (2022-12-29)
+
+
+### Bug Fixes
+
+* Style interactive timeline ([9d715cf](https://github.com/stenic/ledger/commit/9d715cf0df11bb68cf569002f73bc2c36562bc80))
+
 ## [1.6.3](https://github.com/stenic/ledger/compare/v1.6.2...v1.6.3) (2022-12-29)
 
 
