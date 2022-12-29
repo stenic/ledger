@@ -33,6 +33,7 @@ func Run(endpoint, namespace, envLocation string) {
 		MetricsBindAddress:     ":8082",
 		Port:                   9443,
 		HealthProbeBindAddress: ":8081",
+		Namespace:              namespace,
 		// LeaderElection:          true,
 		// LeaderElectionID:        "ledger.stenic.io",
 		// LeaderElectionNamespace: "ledger",
