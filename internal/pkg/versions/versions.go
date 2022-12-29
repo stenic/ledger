@@ -89,7 +89,7 @@ type CountResult struct {
 }
 
 func CountByDay() []CountResult {
-	rows, err := storage.Db.Query("SELECT count(id), DATE(`timestamp`) AS date_formatted FROM versions GROUP BY date_formatted")
+	rows, err := storage.Db.Query("SELECT count(id), SUBSTR(DATE(`timestamp`), 0, 11) AS date_formatted FROM versions GROUP BY date_formatted")
 	if err != nil {
 		logrus.Fatal(err)
 	}
