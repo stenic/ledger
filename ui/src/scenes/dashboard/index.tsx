@@ -8,6 +8,7 @@ import gql from "graphql-tag";
 import { theme } from "../../theme";
 import { PointOfSaleOutlined } from "@mui/icons-material";
 import FlexBetween from "../../components/FlexBetween";
+import { nivoTheme } from "../../theme";
 
 const Timeline = () => {
   const { data, isLoading } = useGqlQuery(
@@ -32,9 +33,9 @@ const Timeline = () => {
       emptyColor="#333"
       colors={["#61cdbb", "#97e3d5", "#e8c1a0", "#f47560"]}
       // margin={{ top: 40, right: 40, bottom: 100, left: 40 }}
-      isInteractive={false}
       dayBorderWidth={0}
       theme={{
+        ...nivoTheme,
         labels: { text: { fill: "#fff" } },
       }}
     />
