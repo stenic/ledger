@@ -18,6 +18,7 @@ import { useAuth } from "react-oidc-context";
 import { EnvironmentData } from "../types/environment";
 import { ApplicationData } from "../types/application";
 import { LocationData } from "../types/location";
+import { useSnackbar } from "notistack";
 
 interface TFormData {
   environment: string;
@@ -34,6 +35,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
     version: "",
   };
   const [formData, setFormData] = useState(defaultFormData);
+  const { enqueueSnackbar } = useSnackbar();
 
   const auth = useAuth();
   const [apps, setApps] = useState([]);
@@ -57,6 +59,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
       .then(setEnvs)
       .catch((e) => {
         console.error(e);
+        enqueueSnackbar(`Error: ${e}`, { variant: "error" });
         // auth.signinSilent();
       });
   }, [auth, setEnvs]);
@@ -78,6 +81,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
       .then(setApps)
       .catch((e) => {
         console.error(e);
+        enqueueSnackbar(`Error: ${e}`, { variant: "error" });
         // auth.signinSilent();
       });
   }, [auth, setApps]);
@@ -99,12 +103,13 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
       .then(setLocs)
       .catch((e) => {
         console.error(e);
+        enqueueSnackbar(`Error: ${e}`, { variant: "error" });
         // auth.signinSilent();
       });
   }, [auth, setLocs]);
 
-  const saveHandler = (formData: TFormData) => {
-    fetch("/query", {
+  const saveHandler = (formData: TFormData): Promise<Response> => {
+    return fetch("/query", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -120,9 +125,15 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
     event: React.FormEvent<HTMLButtonElement | HTMLFormElement>
   ) => {
     event.preventDefault();
-    saveHandler(formData);
-    handleClose();
-    setFormData(defaultFormData);
+    saveHandler(formData)
+      .then(() => {
+        enqueueSnackbar("New version created!", { variant: "success" });
+        handleClose();
+        setFormData(defaultFormData);
+      })
+      .catch((err) => {
+        enqueueSnackbar("Failed to save!", { variant: "error" });
+      });
   };
 
   return (
