@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.1](https://github.com/stenic/ledger/compare/v1.6.0...v1.6.1) (2022-12-29)
+
+
+### Bug Fixes
+
+* Consistent date between mysql and sqlite ([6b932d8](https://github.com/stenic/ledger/commit/6b932d8c5f63039fa2c416e120d716071bd569d2))
+
 # [1.6.0](https://github.com/stenic/ledger/compare/v1.5.7...v1.6.0) (2022-12-29)
 
 
