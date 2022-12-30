@@ -1,12 +1,9 @@
 import { Box, Typography } from "@mui/material";
 import Header from "../../components/Header";
 import { useAuth } from "react-oidc-context";
-
 import { ResponsiveTimeRange } from "@nivo/calendar";
 import { useGqlQuery } from "../../utils/http";
 import gql from "graphql-tag";
-import { theme } from "../../theme";
-import { PointOfSaleOutlined } from "@mui/icons-material";
 import FlexBetween from "../../components/FlexBetween";
 import { nivoTheme } from "../../theme";
 

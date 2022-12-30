@@ -1,10 +1,6 @@
-// import LedgerAdmin from "./admin";
 import React, { useEffect, useState } from "react";
 import SpeedDial from "@mui/material/SpeedDial";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
-import SpeedDialAction from "@mui/material/SpeedDialAction";
-import AddIcon from "@mui/icons-material/Add";
-// import ShareIcon from "@mui/icons-material/Share";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -62,7 +58,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
         enqueueSnackbar(`Error: ${e}`, { variant: "error" });
         // auth.signinSilent();
       });
-  }, [auth, setEnvs]);
+  }, [auth, setEnvs, enqueueSnackbar]);
 
   useEffect(() => {
     const token = auth.user?.access_token;
@@ -84,7 +80,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
         enqueueSnackbar(`Error: ${e}`, { variant: "error" });
         // auth.signinSilent();
       });
-  }, [auth, setApps]);
+  }, [auth, setApps, enqueueSnackbar]);
 
   useEffect(() => {
     const token = auth.user?.access_token;
@@ -106,7 +102,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
         enqueueSnackbar(`Error: ${e}`, { variant: "error" });
         // auth.signinSilent();
       });
-  }, [auth, setLocs]);
+  }, [auth, setLocs, enqueueSnackbar]);
 
   const saveHandler = (formData: TFormData): Promise<Response> => {
     return fetch("/query", {
@@ -213,27 +209,14 @@ const Actions = () => {
     setOpen(false);
   };
 
-  const actions = [
-    { icon: <AddIcon />, name: "Add new version", onClick: handleClickOpen },
-    // { icon: <ShareIcon />, name: "Share" },
-  ];
-
   return (
     <>
       <SpeedDial
         ariaLabel="SpeedDial"
         sx={{ position: "fixed", bottom: 16, right: 16 }}
         icon={<SpeedDialIcon />}
-      >
-        {actions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-            onClick={action.onClick}
-          />
-        ))}
-      </SpeedDial>
+        onClick={handleClickOpen}
+      />
       <Dialog
         open={open}
         onClose={handleClose}
