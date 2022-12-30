@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.5](https://github.com/stenic/ledger/compare/v1.6.4...v1.6.5) (2022-12-30)
+
+
+### Bug Fixes
+
+* Add snackbar notifications ([d5c400e](https://github.com/stenic/ledger/commit/d5c400e14295e016758d8c25459f236f5a5a64ee))
+* Correction on namespaced installs ([8fd5f8a](https://github.com/stenic/ledger/commit/8fd5f8a8007e733491e5111deb89d895a68c38bc))
+* Style chart ([0d66ddb](https://github.com/stenic/ledger/commit/0d66ddb39da087443b9ed719445520228caae1e2))
+
 ## [1.6.4](https://github.com/stenic/ledger/compare/v1.6.3...v1.6.4) (2022-12-29)
 
 
