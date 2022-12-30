@@ -146,6 +146,8 @@ const Chart = () => {
             data={data?.versions}
             keys={chartContent === "environment" ? data.envs : data.apps}
             indexBy="key"
+            margin={{ top: 50, right: 130, bottom: 150, left: 60 }}
+            axisBottom={{ tickRotation: 45 }}
           />
         )}
       </Box>
