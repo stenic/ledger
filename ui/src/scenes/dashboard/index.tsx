@@ -25,8 +25,7 @@ const Timeline = () => {
   return (
     <ResponsiveTimeRange
       data={data?.versionCountPerDay}
-      // from="2018-04-01"
-      // to="2018-08-12"
+      to={new Date().toISOString().substring(0, 10)}
       emptyColor="#333"
       colors={["#61cdbb", "#97e3d5", "#e8c1a0", "#f47560"]}
       // margin={{ top: 40, right: 40, bottom: 100, left: 40 }}
