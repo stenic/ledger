@@ -3,7 +3,7 @@ testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
-  args_bin = []
+  args_bin = ["--loglevel=debug"]
   bin = ";export $(grep -v '^#' .env | xargs); ./tmp/main server"
   cmd = "go build -o ./tmp/main ./cmd/ledger/"
   delay = 1000
