@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.8](https://github.com/stenic/ledger/compare/v1.6.7...v1.6.8) (2022-12-31)
+
+
+### Bug Fixes
+
+* **api:** Handle dedup correct ([a5ccfb0](https://github.com/stenic/ledger/commit/a5ccfb00b3fae94af004cf512c8b2238d18c2ecf))
+
 ## [1.6.7](https://github.com/stenic/ledger/compare/v1.6.6...v1.6.7) (2022-12-31)
 
 
