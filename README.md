@@ -62,7 +62,7 @@ by using setting one or more of the annotations below.
 
 ### GraphQL API
 
-Communication between any system is possible using the graphql API. This requires a TOKEN to be used, you
+Communication between any system is possible using the GraphQL API. This requires a TOKEN to be used, you
 can use an OIDC token or generate a long-lived token using the admin CLI.
 
 ```bash
