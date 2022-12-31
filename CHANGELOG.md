@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.7](https://github.com/stenic/ledger/compare/v1.6.6...v1.6.7) (2022-12-31)
+
+
+### Bug Fixes
+
+* **ui:** Dashboard now shows current day ([63d0dd5](https://github.com/stenic/ledger/commit/63d0dd522eb29830ac5bf4400ec653f18cbeeb4d))
+
 ## [1.6.6](https://github.com/stenic/ledger/compare/v1.6.5...v1.6.6) (2022-12-31)
 
 
