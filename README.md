@@ -27,6 +27,8 @@ helm repo add ledger https://stenic.github.io/ledger/
 helm install ledger --namespace ledger ledger/ledger
 ```
 
+Check the [helm chart](./charts/ledger/) for more configuration options.
+
 ## Collecting versions
 
 Ledger lets you choose how you want to record versions.
