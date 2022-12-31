@@ -54,11 +54,11 @@ It will collect changes to Deployments and Statefulsets. When a change is detect
 image name without the repository as the application and the tag as the version. This can be overwritten
 by using setting one or more of the annotations below.
 
-| Aannotation                  | Description                    | Default                          |
-| ---------------------------- | ------------------------------ | -------------------------------- |
-| ledger.stenic.io/location    | Overwrite the location         | Set by the agent                 |
-| ledger.stenic.io/environment | Overwrite the environment      | Resource namespace               |
-| ledger.stenic.io/application | Overwrite the application name | The image without the repository |
+| Aannotation                    | Description                    | Default                          |
+| ------------------------------ | ------------------------------ | -------------------------------- |
+| `ledger.stenic.io/location`    | Overwrite the location         | Set by the agent                 |
+| `ledger.stenic.io/environment` | Overwrite the environment      | Resource namespace               |
+| `ledger.stenic.io/application` | Overwrite the application name | The image without the repository |
 
 ### GraphQL API
 
