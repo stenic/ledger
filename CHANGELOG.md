@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.6](https://github.com/stenic/ledger/compare/v1.6.5...v1.6.6) (2022-12-31)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @testing-library/user-event to v14 ([#9](https://github.com/stenic/ledger/issues/9)) ([ff6112c](https://github.com/stenic/ledger/commit/ff6112c40efc3fd5ac4b8f8fe2d90a26cf5e0d8d))
+* **deps:** update dependency @types/node to v18 ([#11](https://github.com/stenic/ledger/issues/11)) ([9188671](https://github.com/stenic/ledger/commit/91886711f72d8a7557ec492558d1a94a9e38874c))
+
 ## [1.6.5](https://github.com/stenic/ledger/compare/v1.6.4...v1.6.5) (2022-12-30)
 
 
