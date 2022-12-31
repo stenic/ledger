@@ -75,7 +75,7 @@ func GetLast(location, environment, application string) *Version {
 			&version.Version,
 			&version.Timestamp,
 		)
-		if err != nil {
+		if err == nil {
 			return &version
 		}
 	}
