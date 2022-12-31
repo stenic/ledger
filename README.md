@@ -29,13 +29,16 @@ helm install ledger --namespace ledger ledger/ledger
 
 ## Collecting versions
 
-Ledger lets you choose how you want te record versions.
+Ledger lets you choose how you want to record versions.
 
-- **client-cli**: Included cli tool `ledger client -h`
-- **kubernetes-agent**: Included kubernetes agent `ledger agent -h`
-- **curl**: Send without ledger on your system
+- Client CLI
+- Kubernetes agent
+- Direct GraphQL API
 
-### Client-cli
+### Client CLI
+
+The client CLI simplifies the interaction with the API. This requires a TOKEN to be used, you
+can use an OIDC token or generate a long-lived token using the admin CLI.
 
 ```bash
 curl -o ledger https://[ledger-installation]/download
@@ -43,11 +46,22 @@ chmod +x ledger
 ./ledger client new-version app env version
 ```
 
-### Kubernetes agent
+### Kubernetes Agent
 
-It will collect changes to Deployments and Statefulsets
+It will collect changes to Deployments and Statefulsets. When a change is detected, the agent will use the
+image name without the repository as the application and the tag as the version. This can be overwritten
+by using setting one or more of the annotations below.
 
-### Sending using the GraphQL API
+| Aannotation                  | Description                    | Default                          |
+| ---------------------------- | ------------------------------ | -------------------------------- |
+| ledger.stenic.io/location    | Overwrite the location         | Set by the agent                 |
+| ledger.stenic.io/environment | Overwrite the environment      | Resource namespace               |
+| ledger.stenic.io/application | Overwrite the application name | The image without the repository |
+
+### GraphQL API
+
+Communication between any system is possible using the graphql API. This requires a TOKEN to be used, you
+can use an OIDC token or generate a long-lived token using the admin CLI.
 
 ```bash
 export TOKEN=ey...
@@ -65,5 +79,5 @@ curl 'https://ledger.development.tbnlabs.be/query' \
 ## Administration
 
 ```
-kubectl exec -ti svc/ledger-server /app/ledger admin new-token agent
+kubectl exec -ti svc/ledger-server /app/ledger admin -h
 ```
