@@ -243,7 +243,7 @@ const Dashboard = () => {
             sx={{
               gridRow: "span 3",
               gridColumn: "span 7",
-              overflow: "scroll",
+              overflowY: "scroll",
             }}
           >
             <LastTable data={data.lastVersions} />
