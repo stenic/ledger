@@ -35,7 +35,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
   const [formData, setFormData] = useState(defaultFormData);
   const { enqueueSnackbar } = useSnackbar();
 
-  const { data, isLoading } = useGqlQuery(
+  const { data } = useGqlQuery(
     ["actionsform"],
     gql`
       query {
@@ -103,7 +103,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
             onInputChange={(event, value) => {
               setFormData({ ...formData, location: value });
             }}
-            options={data.locations}
+            options={data?.locations}
             renderInput={(params) => (
               <TextField name="location" {...params} label="Location" />
             )}
@@ -115,7 +115,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
             onInputChange={(event, value) => {
               setFormData({ ...formData, environment: value });
             }}
-            options={data.environments}
+            options={data?.environments}
             renderInput={(params) => (
               <TextField name="environment" {...params} label="Environment" />
             )}
@@ -127,7 +127,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
             onInputChange={(event, value) => {
               setFormData({ ...formData, application: value });
             }}
-            options={data.applications}
+            options={data?.applications}
             renderInput={(params) => (
               <TextField name="application" {...params} label="Application" />
             )}
