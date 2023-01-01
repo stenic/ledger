@@ -91,8 +91,8 @@ const Pie = ({ data }: { data: any }) => {
 
 const LastTable = ({ data }: { data: Array<VersionData> }) => {
   return (
-    <TableContainer>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+    <TableContainer sx={{ maxHeight: "100%" }}>
+      <Table sx={{ minWidth: 650 }} stickyHeader>
         <TableHead>
           <TableRow>
             <TableCell>Timestamp</TableCell>
@@ -235,7 +235,7 @@ const Dashboard = () => {
             sx={{
               gridRow: "span 3",
               gridColumn: "span 7",
-              overflowY: "scroll",
+              overflow: "hidden",
             }}
           >
             <LastTable data={data.lastVersions} />
