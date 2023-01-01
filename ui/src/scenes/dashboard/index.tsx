@@ -17,24 +17,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-const Timeline = () => {
-  const { data, isLoading } = useGqlQuery(
-    ["versiontimeline"],
-    gql`
-      query {
-        versionCountPerDay {
-          day: timstamp
-          value: count
-        }
-      }
-    `
-  );
-
-  if (isLoading) return <div>Loading</div>;
-
+const Timeline = ({ data }: { data: any }) => {
   return (
     <ResponsiveTimeRange
-      data={data?.versionCountPerDay}
+      data={data}
       to={new Date().toISOString().substring(0, 10)}
       emptyColor="#333"
       colors={["#61cdbb", "#97e3d5", "#e8c1a0", "#f47560"]}
@@ -154,6 +140,10 @@ const Dashboard = () => {
           name
         }
         totalVersions
+        versionCountPerDay {
+          day: timstamp
+          value: count
+        }
         lastVersions {
           id
           application {
@@ -173,13 +163,15 @@ const Dashboard = () => {
     {},
     (d) => {
       let grouped: any = {};
-      const groupBy = "environment";
       d.lastVersions.forEach((e: VersionData) => {
-        grouped[e[groupBy].name] = grouped[e[groupBy].name] || {
+        const key: string = [e.location.name, e.environment.name]
+          .filter((e) => e.length > 0)
+          .join(" / ");
+        grouped[key] = grouped[key] || {
           value: 0,
-          id: e[groupBy].name,
+          id: key,
         };
-        grouped[e[groupBy].name].value++;
+        grouped[key].value++;
       });
 
       return {
@@ -227,7 +219,7 @@ const Dashboard = () => {
               gridColumn: "span 8",
             }}
           >
-            <Timeline />
+            <Timeline data={data.versionCountPerDay} />
           </Box>
           <StatBox
             title="Environments"
