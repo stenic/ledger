@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/stenic/ledger/compare/v1.6.10...v1.7.0) (2023-01-01)
+
+
+### Features
+
+* Add more stuff to dashboard ([5604aeb](https://github.com/stenic/ledger/commit/5604aeb028c295357ce781fa3f9ce95d51281a98))
+
 ## [1.6.10](https://github.com/stenic/ledger/compare/v1.6.9...v1.6.10) (2023-01-01)
 
 
