@@ -21,7 +21,7 @@
     "@types/node": "^18.0.0",
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18.0.8",
-    "graphql-request": "^5.0.0",
+    "graphql-request": "^5.1.0",
     "graphql-tag": "^2.12.6",
     "notistack": "^2.0.8",
     "oidc-client-ts": "^2.1.0",
