@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.2](https://github.com/stenic/ledger/compare/v1.7.1...v1.7.2) (2023-01-01)
+
+
+### Bug Fixes
+
+* **ui:** Improve overflow ([b99aa66](https://github.com/stenic/ledger/commit/b99aa6698b042ae7b7dc4d15a3eb56326d778b56))
+
 ## [1.7.1](https://github.com/stenic/ledger/compare/v1.7.0...v1.7.1) (2023-01-01)
 
 
