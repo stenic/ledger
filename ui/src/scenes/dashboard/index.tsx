@@ -82,48 +82,10 @@ const StatBox = ({
   );
 };
 
-const Pie = () => {
-  const { data, isLoading } = useGqlQuery(
-    ["piedata"],
-    gql`
-      query {
-        lastVersions {
-          application {
-            name
-          }
-          location {
-            name
-          }
-          environment {
-            name
-          }
-        }
-      }
-    `,
-    {},
-    (d) => {
-      let grouped: any = {};
-      const groupBy = "environment";
-      d.lastVersions.forEach((e: VersionData) => {
-        grouped[e[groupBy].name] = grouped[e[groupBy].name] || {
-          value: 0,
-          id: e[groupBy].name,
-        };
-        grouped[e[groupBy].name].value++;
-      });
-
-      return {
-        ...d,
-        grouped: Object.values(grouped),
-      };
-    }
-  );
-
-  if (isLoading) return <div>Loading</div>;
-
+const Pie = ({ data }: { data: any }) => {
   return (
     <ResponsivePie
-      data={data.grouped}
+      data={data}
       margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
       innerRadius={0.5}
       padAngle={0.7}
@@ -141,31 +103,7 @@ const Pie = () => {
   );
 };
 
-const LastTable = () => {
-  const { data, isLoading } = useGqlQuery(
-    ["tabledata"],
-    gql`
-      query {
-        lastVersions {
-          id
-          application {
-            name
-          }
-          location {
-            name
-          }
-          environment {
-            name
-          }
-          version
-          timestamp
-        }
-      }
-    `
-  );
-
-  if (isLoading) return <div>Loading</div>;
-
+const LastTable = ({ data }: { data: Array<VersionData> }) => {
   return (
     <TableContainer>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -179,7 +117,7 @@ const LastTable = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.lastVersions.map((row: VersionData) => (
+          {data.map((row: VersionData) => (
             <TableRow
               key={row.id}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -202,7 +140,7 @@ const LastTable = () => {
 const Dashboard = () => {
   const auth = useAuth();
 
-  const { data } = useGqlQuery(
+  const { data, isLoading } = useGqlQuery(
     ["stats"],
     gql`
       query {
@@ -216,8 +154,39 @@ const Dashboard = () => {
           name
         }
         totalVersions
+        lastVersions {
+          id
+          application {
+            name
+          }
+          location {
+            name
+          }
+          environment {
+            name
+          }
+          version
+          timestamp
+        }
       }
-    `
+    `,
+    {},
+    (d) => {
+      let grouped: any = {};
+      const groupBy = "environment";
+      d.lastVersions.forEach((e: VersionData) => {
+        grouped[e[groupBy].name] = grouped[e[groupBy].name] || {
+          value: 0,
+          id: e[groupBy].name,
+        };
+        grouped[e[groupBy].name].value++;
+      });
+
+      return {
+        ...d,
+        grouped: Object.values(grouped),
+      };
+    }
   );
 
   return (
@@ -227,64 +196,68 @@ const Dashboard = () => {
         subtitle={`Hello ${auth.user?.profile.preferred_username}, welcome to your dashboard`}
       />
 
-      <Box
-        sx={{
-          display: "grid",
-          gap: "10px",
-          gridTemplateColumns: "repeat(12, 1fr)",
-          gridAutoRows: "160px",
-          "& > div": {
-            bgcolor: "background.paper",
-            p: 1,
-          },
-        }}
-      >
-        <StatBox
-          title="Total"
-          value={data?.totalVersions}
-          description="Total number of versions"
-        />
-        <StatBox
-          title="Applications"
-          value={data?.applications.length || "..."}
-          description="Unique applications"
-        />
+      {isLoading ? (
+        <div>Loading</div>
+      ) : (
         <Box
           sx={{
-            gridRow: "span 2",
-            gridColumn: "span 8",
+            display: "grid",
+            gap: "10px",
+            gridTemplateColumns: "repeat(12, 1fr)",
+            gridAutoRows: "160px",
+            "& > div": {
+              bgcolor: "background.paper",
+              p: 1,
+            },
           }}
         >
-          <Timeline />
+          <StatBox
+            title="Total"
+            value={data?.totalVersions}
+            description="Total number of versions"
+          />
+          <StatBox
+            title="Applications"
+            value={data?.applications.length || "..."}
+            description="Unique applications"
+          />
+          <Box
+            sx={{
+              gridRow: "span 2",
+              gridColumn: "span 8",
+            }}
+          >
+            <Timeline />
+          </Box>
+          <StatBox
+            title="Environments"
+            value={data?.environments.length || "..."}
+            description="Unique environments"
+          />
+          <StatBox
+            title="Locations"
+            value={data?.locations.length || "..."}
+            description="Unique locations"
+          />
+          <Box
+            sx={{
+              gridRow: "span 3",
+              gridColumn: "span 7",
+              overflow: "scroll",
+            }}
+          >
+            <LastTable data={data.lastVersions} />
+          </Box>
+          <Box
+            sx={{
+              gridRow: "span 3",
+              gridColumn: "span 5",
+            }}
+          >
+            <Pie data={data.grouped} />
+          </Box>
         </Box>
-        <StatBox
-          title="Environments"
-          value={data?.environments.length || "..."}
-          description="Unique environments"
-        />
-        <StatBox
-          title="Locations"
-          value={data?.locations.length || "..."}
-          description="Unique locations"
-        />
-        <Box
-          sx={{
-            gridRow: "span 3",
-            gridColumn: "span 7",
-            overflow: "scroll",
-          }}
-        >
-          <LastTable />
-        </Box>
-        <Box
-          sx={{
-            gridRow: "span 3",
-            gridColumn: "span 5",
-          }}
-        >
-          <Pie />
-        </Box>
-      </Box>
+      )}
     </Box>
   );
 };
