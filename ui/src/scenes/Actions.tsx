@@ -15,6 +15,8 @@ import { EnvironmentData } from "../types/environment";
 import { ApplicationData } from "../types/application";
 import { LocationData } from "../types/location";
 import { useSnackbar } from "notistack";
+import { useGqlQuery } from "../utils/http";
+import gql from "graphql-tag";
 
 interface TFormData {
   environment: string;
@@ -33,76 +35,30 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
   const [formData, setFormData] = useState(defaultFormData);
   const { enqueueSnackbar } = useSnackbar();
 
+  const { data, isLoading } = useGqlQuery(
+    ["actionsform"],
+    gql`
+      query {
+        environments {
+          name
+        }
+        applications {
+          name
+        }
+        locations {
+          name
+        }
+      }
+    `,
+    {},
+    (d) => ({
+      environments: d.environments.map((r: EnvironmentData) => r.name),
+      locations: d.locations.map((r: LocationData) => r.name),
+      applications: d.applications.map((r: ApplicationData) => r.name),
+    })
+  );
+
   const auth = useAuth();
-  const [apps, setApps] = useState([]);
-  const [locs, setLocs] = useState([]);
-  const [envs, setEnvs] = useState([]);
-
-  useEffect(() => {
-    const token = auth.user?.access_token;
-    fetch("/query", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        query: "{ environments { name } }",
-      }),
-    })
-      .then((e) => e.json())
-      .then((d) => d.data.environments.map((r: EnvironmentData) => r.name))
-      .then(setEnvs)
-      .catch((e) => {
-        console.error(e);
-        enqueueSnackbar(`Error: ${e}`, { variant: "error" });
-        // auth.signinSilent();
-      });
-  }, [auth, setEnvs, enqueueSnackbar]);
-
-  useEffect(() => {
-    const token = auth.user?.access_token;
-    fetch("/query", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        query: "{ applications { name } }",
-      }),
-    })
-      .then((e) => e.json())
-      .then((d) => d.data.applications.map((r: ApplicationData) => r.name))
-      .then(setApps)
-      .catch((e) => {
-        console.error(e);
-        enqueueSnackbar(`Error: ${e}`, { variant: "error" });
-        // auth.signinSilent();
-      });
-  }, [auth, setApps, enqueueSnackbar]);
-
-  useEffect(() => {
-    const token = auth.user?.access_token;
-    fetch("/query", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        query: "{ locations { name } }",
-      }),
-    })
-      .then((e) => e.json())
-      .then((d) => d.data.locations.map((r: LocationData) => r.name))
-      .then(setLocs)
-      .catch((e) => {
-        console.error(e);
-        enqueueSnackbar(`Error: ${e}`, { variant: "error" });
-        // auth.signinSilent();
-      });
-  }, [auth, setLocs, enqueueSnackbar]);
 
   const saveHandler = (formData: TFormData): Promise<Response> => {
     return fetch("/query", {
@@ -147,7 +103,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
             onInputChange={(event, value) => {
               setFormData({ ...formData, location: value });
             }}
-            options={locs}
+            options={data.locations}
             renderInput={(params) => (
               <TextField name="location" {...params} label="Location" />
             )}
@@ -159,7 +115,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
             onInputChange={(event, value) => {
               setFormData({ ...formData, environment: value });
             }}
-            options={envs}
+            options={data.environments}
             renderInput={(params) => (
               <TextField name="environment" {...params} label="Environment" />
             )}
@@ -171,7 +127,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
             onInputChange={(event, value) => {
               setFormData({ ...formData, application: value });
             }}
-            options={apps}
+            options={data.applications}
             renderInput={(params) => (
               <TextField name="application" {...params} label="Application" />
             )}
