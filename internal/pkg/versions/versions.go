@@ -131,7 +131,7 @@ func GetAll(opts ...query.QueryOpts) []Version {
 }
 
 func GetAllLast() []Version {
-	q := query.AddQueryParts("select id, application, environment, location, version, timestamp from versions where id in (select max(id) from versions group by location, environment, application)")
+	q := query.AddQueryParts("select id, application, environment, location, version, timestamp from versions where id in (select max(id) from versions group by location, environment, application) order by timestamp desc")
 	versions, err := runQuery(q)
 	if err != nil {
 		log.Fatal(err)
