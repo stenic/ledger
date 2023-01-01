@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.10](https://github.com/stenic/ledger/compare/v1.6.9...v1.6.10) (2023-01-01)
+
+
+### Bug Fixes
+
+* Handle missing data ([589b7eb](https://github.com/stenic/ledger/commit/589b7ebd08f2edbf1108528981153be1623063f5))
+* Handle missing data ([05a4faa](https://github.com/stenic/ledger/commit/05a4faab8fcd04efd9e2d1665418976a141145b9))
+
 ## [1.6.9](https://github.com/stenic/ledger/compare/v1.6.8...v1.6.9) (2023-01-01)
 
 
