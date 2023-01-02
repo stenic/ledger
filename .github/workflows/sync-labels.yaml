@@ -12,7 +12,5 @@ jobs:
         with:
           config-file: |
             https://raw.githubusercontent.com/stenic/.github/master/labels.json
-            .github/labels.json
           delete-other-labels: false
           dry-run: true
-          token: ${{ secrets.GITHUB_TOKEN }}
