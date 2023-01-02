@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
+	vembed "github.com/NoUseFreak/go-vembed"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/stenic/ledger/internal/pkg/utils/env"
@@ -49,6 +51,12 @@ func init() {
 	rootCommand.PersistentFlags().StringVar(&logLevel, "loglevel", env.GetString("LOG_LEVEL", logrus.InfoLevel.String()), "Log level (debug, info, warn, error, fatal, panic)")
 	rootCommand.PersistentFlags().StringVar(&logFormat, "logformat", env.GetString("LOG_FORMAT", "text"), "Log format (json, text)")
 	rootCommand.PersistentFlags().BoolVar(&logCaller, "logcaller", env.GetBool("LOG_CALLER", false), "Log caller is printed")
+
+	rootCommand.Version = fmt.Sprintf(
+		"%s, build %s",
+		vembed.Version.GetGitSummary(),
+		vembed.Version.GetGitCommit(),
+	)
 }
 
 func main() {

@@ -5,7 +5,7 @@ tmp_dir = "tmp"
 [build]
   args_bin = ["--loglevel=debug"]
   bin = ";export $(grep -v '^#' .env | xargs); ./tmp/main server"
-  cmd = "go build -o ./tmp/main ./cmd/ledger/"
+  cmd = "go build -ldflags=\"`vembed`\" -o ./tmp/main ./cmd/ledger/"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "ui"]
   exclude_file = []

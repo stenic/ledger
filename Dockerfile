@@ -1,5 +1,7 @@
 FROM golang:1.19 AS build-server
 
+RUN go install github.com/NoUseFreak/go-vembed/vembed@latest
+
 WORKDIR /workspace
 COPY ./go.* .
 RUN go mod download
@@ -7,7 +9,8 @@ COPY ./cmd ./cmd
 COPY ./graph ./graph
 COPY ./internal ./internal
 COPY ./migrations ./migrations
-RUN CGO_ENABLED=1 GOOS=linux go build -a -o ledger ./cmd/ledger
+COPY ./.git ./.git
+RUN CGO_ENABLED=1 GOOS=linux go build -ldflags="`vembed`" -a -o ledger ./cmd/ledger
 
 
 FROM node:alpine AS build-ui
