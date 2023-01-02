@@ -14,7 +14,7 @@ import { VersionData } from "../../types/version";
 
 const Feed = () => {
   const { data, isLoading } = useGqlQuery(
-    ["versions"],
+    ["feed", "version"],
     gql`
       query {
         versions(orderBy: { timestamp: desc }) {

@@ -15,7 +15,7 @@ import { EnvironmentData } from "../types/environment";
 import { ApplicationData } from "../types/application";
 import { LocationData } from "../types/location";
 import { useSnackbar } from "notistack";
-import { useGqlQuery } from "../utils/http";
+import { useGqlQuery, useQueryClient } from "../utils/http";
 import gql from "graphql-tag";
 
 interface TFormData {
@@ -34,6 +34,7 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
   };
   const [formData, setFormData] = useState(defaultFormData);
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const { data } = useGqlQuery(
     ["actionsform"],
@@ -79,11 +80,13 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
     event.preventDefault();
     saveHandler(formData)
       .then(() => {
+        queryClient.refetchQueries({ exact: false, stale: true });
         enqueueSnackbar("New version created!", { variant: "success" });
         handleClose();
         setFormData(defaultFormData);
       })
       .catch((err) => {
+        console.error(err);
         enqueueSnackbar("Failed to save!", { variant: "error" });
       });
   };

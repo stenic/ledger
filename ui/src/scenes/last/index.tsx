@@ -7,7 +7,7 @@ import { VersionData } from "../../types/version";
 
 const LastVersions = () => {
   const { data, isLoading } = useGqlQuery(
-    ["lastversions"],
+    ["lastversions", "version"],
     gql`
       query {
         lastVersions {

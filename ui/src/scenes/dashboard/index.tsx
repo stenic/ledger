@@ -127,7 +127,7 @@ const Dashboard = () => {
   const auth = useAuth();
 
   const { data, isLoading } = useGqlQuery(
-    ["stats"],
+    ["stats", "version"],
     gql`
       query {
         environments {

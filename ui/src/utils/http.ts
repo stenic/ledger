@@ -1,6 +1,9 @@
 import { useAuth } from "react-oidc-context";
 import { GraphQLClient } from "graphql-request";
-import { useQuery } from "@tanstack/react-query";
+import {
+  useQuery,
+  useQueryClient as rqUseQueryClient,
+} from "@tanstack/react-query";
 import { DocumentNode } from "graphql/language/ast";
 
 export const useGqlFetch = () => {
@@ -53,3 +56,5 @@ export const useGqlQuery = (
     ...config,
   });
 };
+
+export const useQueryClient = rqUseQueryClient;

@@ -87,7 +87,7 @@ const Chart = () => {
   };
 
   const { data } = useGqlQuery(
-    ["versionschart"],
+    ["chart", "version"],
     gql`
       query {
         versions {
