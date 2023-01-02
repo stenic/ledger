@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.5](https://github.com/stenic/ledger/compare/v1.7.4...v1.7.5) (2023-01-02)
+
+
+### Bug Fixes
+
+* **ui:** Refresh content when adding a value ([7d15e8b](https://github.com/stenic/ledger/commit/7d15e8b141330734f19624159516be085e6b2efe))
+
 ## [1.7.4](https://github.com/stenic/ledger/compare/v1.7.3...v1.7.4) (2023-01-02)
 
 
