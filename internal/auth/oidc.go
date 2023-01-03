@@ -13,38 +13,7 @@ import (
 )
 
 func getOidcValidator(issuerURLString string, audience []string) *jwtmiddleware.JWTMiddleware {
-	issuerURL, err := url.Parse(issuerURLString)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	provider := jwks.NewCachingProvider(
-		issuerURL,
-		time.Duration(5*time.Minute),
-		// func(p *jwks.Provider) {
-		// 	if false {
-		// 		return
-		// 	}
-		// 	tr := &http.Transport{
-		// 		TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
-		// 	}
-		// 	p.Client.Transport = tr
-		// },
-	)
-
-	customClaims := func() validator.CustomClaims {
-		return &CustomClaims{}
-	}
-
-	jwtValidator, _ := validator.New(
-		provider.KeyFunc,
-		validator.RS256,
-		issuerURL.String(),
-		audience,
-		// validator.WithAllowedClockSkew(30*time.Second),
-
-		validator.WithCustomClaims(customClaims),
-	)
+	jwtValidator := getOidcValidatorFunc(issuerURLString, audience)
 
 	errorHandler := func(w http.ResponseWriter, r *http.Request, err error) {
 		if errors.Is(err, jwtmiddleware.ErrJWTInvalid) {
@@ -59,4 +28,30 @@ func getOidcValidator(issuerURLString string, audience []string) *jwtmiddleware.
 		jwtmiddleware.WithErrorHandler(errorHandler),
 		jwtmiddleware.WithCredentialsOptional(true),
 	)
+}
+
+func getOidcValidatorFunc(issuerURLString string, audience []string) *validator.Validator {
+	issuerURL, err := url.Parse(issuerURLString)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	provider := jwks.NewCachingProvider(
+		issuerURL,
+		time.Duration(5*time.Minute),
+	)
+
+	customClaims := func() validator.CustomClaims {
+		return &CustomClaims{}
+	}
+
+	jwtValidator, _ := validator.New(
+		provider.KeyFunc,
+		validator.RS256,
+		issuerURL.String(),
+		audience,
+		validator.WithCustomClaims(customClaims),
+	)
+
+	return jwtValidator
 }

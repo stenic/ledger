@@ -62,9 +62,12 @@ func (s *Server) Listen(addr string) error {
 	if os.Getenv("DEBUG") == "true" {
 		s.server.Any("/playground", gin.WrapF(playground.Handler("GraphQL playground", "/query")))
 	}
+
+	ledgerAuth := auth.New(oidcOptions)
+
 	s.server.Any(
 		"/query",
-		auth.JwtHandler(oidcOptions),
+		ledgerAuth.GetJWTMiddleware(),
 		gin.WrapH(handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))),
 	)
 
@@ -81,6 +84,8 @@ func (s *Server) Listen(addr string) error {
 
 		c.File(bin)
 	})
+
+	s.server.GET("/socket", wsHandler(ledgerAuth))
 
 	logrus.Info("Starting webserver")
 	return s.server.Run(addr)

@@ -3,14 +3,9 @@ package auth
 import (
 	"context"
 	"net/http"
-	"os"
 	"strings"
 
-	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-
-	jwtmiddleware "github.com/auth0/go-jwt-middleware/v2"
-	"github.com/auth0/go-jwt-middleware/v2/validator"
 )
 
 type localJwtClaims struct{}
@@ -28,32 +23,6 @@ type CustomClaims struct {
 
 func (c *CustomClaims) Validate(ctx context.Context) error {
 	return nil
-}
-
-func JwtHandler(opts ApiSecurityOptions) gin.HandlerFunc {
-
-	var jwtOidcMiddleware *jwtmiddleware.JWTMiddleware
-	if opts.IssuerURL != "" {
-		jwtOidcMiddleware = getOidcValidator(opts.IssuerURL, opts.Audience)
-	}
-
-	return func(c *gin.Context) {
-		var handler http.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
-			c.Request = r
-			c.Next()
-		}
-
-		if jwtOidcMiddleware != nil {
-			logrus.Debug("Checking oidc token")
-			jwtOidcMiddleware.CheckJWT(handler).ServeHTTP(c.Writer, c.Request)
-		}
-
-		// Continue with local auth if OIDC is not detected
-		if c.Request.Context().Value(jwtmiddleware.ContextKey{}) == nil {
-			logrus.Debug("Checking local token")
-			checkLocalJWT(handler).ServeHTTP(c.Writer, c.Request)
-		}
-	}
 }
 
 func checkLocalJWT(next http.Handler) http.Handler {
@@ -74,30 +43,4 @@ func checkLocalJWT(next http.Handler) http.Handler {
 
 type UserInfo struct {
 	Username string
-}
-
-func TokenFromContext(ctx context.Context) *UserInfo {
-	if os.Getenv("AUTH_INSECURE") == "yes" {
-		logrus.Error("Skipping auth, hope you are in dev mode.")
-		return &UserInfo{
-			Username: "Insecure user",
-		}
-	}
-	if raw, valid := ctx.Value(localJwtClaims{}).(*Claims); valid {
-		return &UserInfo{
-			Username: raw.Username,
-		}
-	}
-
-	if raw, valid := ctx.Value(jwtmiddleware.ContextKey{}).(*validator.ValidatedClaims); valid {
-		cc, ok := raw.CustomClaims.(*CustomClaims)
-		if !ok {
-			return nil
-		}
-		return &UserInfo{
-			Username: cc.PreferredUsername,
-		}
-	}
-
-	return nil
 }

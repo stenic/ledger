@@ -15,6 +15,7 @@ import Feed from "./scenes/feed";
 import Toolbar from "@mui/material/Toolbar";
 import { useAuth } from "react-oidc-context";
 import { SnackbarProvider } from "notistack";
+import Websockets from "./components/Websocket";
 
 const App = () => {
   const auth = useAuth();
@@ -59,6 +60,7 @@ const App = () => {
               <Actions />
             </main>
           </div>
+          <Websockets />
         </SnackbarProvider>
       </>
     );
