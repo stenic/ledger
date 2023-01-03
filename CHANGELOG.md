@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0](https://github.com/stenic/ledger/compare/v1.7.5...v1.8.0) (2023-01-03)
+
+
+### Features
+
+* Add websockets to update ui on change ([91603a9](https://github.com/stenic/ledger/commit/91603a9c8fc97cee2e69967d6ad6c49c1dcea688))
+
 ## [1.7.5](https://github.com/stenic/ledger/compare/v1.7.4...v1.7.5) (2023-01-02)
 
 
