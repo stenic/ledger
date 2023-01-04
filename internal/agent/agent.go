@@ -25,19 +25,29 @@ func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 }
 
-func Run(endpoint, namespace, envLocation string) {
-	location = envLocation
+type Options struct {
+	Endpoint   string
+	Namespaces string
+	Location   string
+
+	LeaderElection          bool
+	LeaderElectionNamespace string
+}
+
+func Run(opts Options) {
+	location = opts.Location
 	ctrl.SetLogger(logrusr.New(logrus.StandardLogger()))
-	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-		Scheme:                 scheme,
-		MetricsBindAddress:     ":8082",
-		Port:                   9443,
-		HealthProbeBindAddress: ":8081",
-		Namespace:              namespace,
-		// LeaderElection:          true,
-		// LeaderElectionID:        "ledger.stenic.io",
-		// LeaderElectionNamespace: "ledger",
-	})
+	mgrOpts := ctrl.Options{
+		Scheme:                  scheme,
+		MetricsBindAddress:      ":8082",
+		Port:                    9443,
+		HealthProbeBindAddress:  ":8081",
+		Namespace:               opts.Namespaces,
+		LeaderElection:          opts.LeaderElection,
+		LeaderElectionID:        "ledger.stenic.io",
+		LeaderElectionNamespace: opts.LeaderElectionNamespace,
+	}
+	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), mgrOpts)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -47,7 +57,7 @@ func Run(endpoint, namespace, envLocation string) {
 		logrus.Fatal("Please provide a TOKEN environment variable")
 	}
 	lc = client.LedgerClient{
-		Endpoint: endpoint + "/query",
+		Endpoint: opts.Endpoint + "/query",
 		Token:    tkn,
 	}
 
