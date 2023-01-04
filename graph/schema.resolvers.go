@@ -47,6 +47,8 @@ func (r *mutationResolver) CreateVersion(ctx context.Context, input model.NewVer
 		version = *v
 	} else {
 		version.ID = version.Save()
+		logrus.Errorf("Publishing version %d", version.ID)
+		r.MessageBus.Publish("newVersion", strconv.FormatInt(version.ID, 10))
 	}
 
 	return &model.Version{

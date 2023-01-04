@@ -16,6 +16,7 @@ import (
 	"github.com/stenic/ledger/graph"
 	"github.com/stenic/ledger/graph/generated"
 	auth "github.com/stenic/ledger/internal/auth"
+	"github.com/stenic/ledger/internal/pkg/messagebus"
 	"github.com/stenic/ledger/internal/storage"
 )
 
@@ -34,10 +35,16 @@ type Server struct {
 func (s *Server) Listen(addr string) error {
 	gin.SetMode(gin.ReleaseMode)
 
+	// Database
 	engine := storage.Database{}
 	engine.InitDB()
 	defer engine.CloseDB()
 	engine.Migrate()
+
+	// Message bus
+	msgBusOpts := messagebus.Options{}
+	msgBus := messagebus.New(msgBusOpts)
+	defer msgBus.Close()
 
 	s.server = gin.New()
 	logrus.Debugf("Serving static from %s", s.StaticAssetPath)
@@ -68,7 +75,9 @@ func (s *Server) Listen(addr string) error {
 	s.server.Any(
 		"/query",
 		ledgerAuth.GetJWTMiddleware(),
-		gin.WrapH(handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))),
+		gin.WrapH(handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{
+			MessageBus: msgBus,
+		}}))),
 	)
 
 	s.server.GET("/auth/config", func(c *gin.Context) {
@@ -85,7 +94,7 @@ func (s *Server) Listen(addr string) error {
 		c.File(bin)
 	})
 
-	s.server.GET("/socket", wsHandler(ledgerAuth))
+	s.server.GET("/socket", wsHandler(ledgerAuth, msgBus))
 
 	logrus.Info("Starting webserver")
 	return s.server.Run(addr)
