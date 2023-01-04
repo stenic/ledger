@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	"github.com/gobwas/ws"
 	"github.com/gobwas/ws/wsutil"
 	"github.com/sirupsen/logrus"
@@ -35,7 +36,15 @@ func wsHandler(authValidator auth.LedgerValidator, msgBuss messagebus.MessageBus
 	go hub.run()
 
 	go func() {
-		for msg := range msgBuss.Consume("newVersion") {
+		var pubsub <-chan *redis.Message
+
+		for pubsub == nil {
+			pubsub = msgBuss.Consume("newVersion")
+			time.Sleep(1 * time.Second)
+		}
+
+		logger.Debug("Instance of pubsub configured, waiting for messages")
+		for msg := range pubsub {
 			logger.Trace("Refreshed version count")
 			hub.broadcast <- []byte(msg.Payload)
 		}

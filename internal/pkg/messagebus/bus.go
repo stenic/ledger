@@ -69,7 +69,12 @@ func (b bus) Publish(channel, msg string) error {
 }
 
 func (b bus) Consume(channel string) <-chan *redis.Message {
-	return b.ps.Subscribe(context.Background(), channel).Channel()
+	rps := b.ps.Subscribe(context.Background(), channel)
+	if rps == nil {
+		return nil
+	}
+
+	return rps.Channel()
 }
 
 func (b bus) Close() {

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -43,6 +44,10 @@ func (s *Server) Listen(addr string) error {
 
 	// Message bus
 	msgBusOpts := messagebus.Options{}
+	if s.DiscoveryNamespace != "" {
+		msgBusOpts.DiscoveryNamespace = s.DiscoveryNamespace
+		msgBusOpts.DiscoveryLabelSelector = fmt.Sprintf("app.kubernetes.io/name=%s,component=%s", "ledger", "server")
+	}
 	msgBus := messagebus.New(msgBusOpts)
 	defer msgBus.Close()
 
