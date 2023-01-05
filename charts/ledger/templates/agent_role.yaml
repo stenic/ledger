@@ -1,4 +1,5 @@
 {{- if .Values.ledgerAgent.enabled -}}
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: {{ .Values.ledgerAgent.namespaced | ternary "Role" "ClusterRole" }}
 metadata:
@@ -23,4 +24,25 @@ rules:
   verbs:
   - create
   - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "ledger.fullname" . }}-agent-le
+  labels:
+    {{- include "ledger.labels" . | nindent 4 }}
+    component: agent
+rules:
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
 {{- end }}

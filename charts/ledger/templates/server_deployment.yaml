@@ -83,6 +83,8 @@ spec:
                 secretKeyRef:
                   key: log-level
                   name: {{ include "ledger.fullname" . }}-server
+            - name: DISCOVERY_NAMESPACE
+              value: {{ .Release.Namespace }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
