@@ -154,13 +154,13 @@ func (r *queryResolver) Locations(ctx context.Context) ([]*model.Location, error
 }
 
 // LastVersions is the resolver for the lastVersions field.
-func (r *queryResolver) LastVersions(ctx context.Context) ([]*model.Version, error) {
+func (r *queryResolver) LastVersions(ctx context.Context, days *int) ([]*model.Version, error) {
 	if user := auth.TokenFromContext(ctx); user == nil {
 		return nil, fmt.Errorf("access denield")
 	}
 
 	var resultLinks []*model.Version
-	for _, item := range versions.GetAllLast() {
+	for _, item := range versions.GetAllLast(days) {
 		resultLinks = append(resultLinks, &model.Version{
 			ID:          strconv.FormatInt(item.ID, 10),
 			Application: &model.Application{Name: item.Application},

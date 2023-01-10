@@ -14,6 +14,7 @@ import (
 )
 
 var Db *sql.DB
+var EngineType string
 
 type Database struct {
 	db     *sql.DB
@@ -35,7 +36,9 @@ func (d *Database) InitDB() {
 	}
 	logrus.Debugf("Setting up DB with %s", engineType)
 	d.db = d.engine.InitDB()
+
 	Db = d.db
+	EngineType = engineType
 }
 
 func (d *Database) CloseDB() {

@@ -144,7 +144,7 @@ const Dashboard = () => {
           day: timstamp
           value: count
         }
-        lastVersions {
+        lastVersions(days: 7) {
           id
           application {
             name

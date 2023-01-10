@@ -130,8 +130,21 @@ func GetAll(opts ...query.QueryOpts) []Version {
 	return versions
 }
 
-func GetAllLast() []Version {
-	q := query.AddQueryParts("select id, application, environment, location, version, timestamp from versions where id in (select max(id) from versions group by location, environment, application) order by timestamp desc")
+func GetAllLast(days *int) []Version {
+	var filter string
+	if days != nil {
+		switch storage.EngineType {
+		case "mysql":
+			filter = fmt.Sprintf("WHERE timestamp > DATE_SUB(NOW(), INTERVAL %d DAYS)", *days)
+		case "sqlite":
+			filter = fmt.Sprintf("where timestamp > date('now', '-%d days')", *days)
+		}
+	}
+	q := query.AddQueryParts(fmt.Sprintf(
+		"select %s from versions where id in (select max(id) from versions %s group by location, environment, application) order by timestamp desc",
+		fields,
+		filter,
+	))
 	versions, err := runQuery(q)
 	if err != nil {
 		log.Fatal(err)
@@ -156,6 +169,8 @@ func runQuery(query string) ([]Version, error) {
 
 	return mapVersions(rows)
 }
+
+const fields = "id, application, environment, location, version, timestamp"
 
 func mapVersions(rows *sql.Rows) ([]Version, error) {
 	var versions []Version

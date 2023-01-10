@@ -73,7 +73,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Applications       func(childComplexity int) int
 		Environments       func(childComplexity int) int
-		LastVersions       func(childComplexity int) int
+		LastVersions       func(childComplexity int, days *int) int
 		Locations          func(childComplexity int) int
 		TotalVersions      func(childComplexity int) int
 		VersionCountPerDay func(childComplexity int) int
@@ -99,7 +99,7 @@ type QueryResolver interface {
 	Environments(ctx context.Context) ([]*model.Environment, error)
 	Applications(ctx context.Context) ([]*model.Application, error)
 	Locations(ctx context.Context) ([]*model.Location, error)
-	LastVersions(ctx context.Context) ([]*model.Version, error)
+	LastVersions(ctx context.Context, days *int) ([]*model.Version, error)
 	VersionCountPerDay(ctx context.Context) ([]*model.DateVersionCount, error)
 	TotalVersions(ctx context.Context) (int, error)
 }
@@ -204,7 +204,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.LastVersions(childComplexity), true
+		args, err := ec.field_Query_lastVersions_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.LastVersions(childComplexity, args["days"].(*int)), true
 
 	case "Query.locations":
 		if e.complexity.Query.Locations == nil {
@@ -400,7 +405,7 @@ type Query {
   environments: [Environment!]!
   applications: [Application!]!
   locations: [Location!]!
-  lastVersions: [Version]!
+  lastVersions(days: Int): [Version]!
   versionCountPerDay: [DateVersionCount]!
   totalVersions: Int!
 }
@@ -479,6 +484,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_lastVersions_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["days"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("days"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["days"] = arg0
 	return args, nil
 }
 
@@ -1154,7 +1174,7 @@ func (ec *executionContext) _Query_lastVersions(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().LastVersions(rctx)
+		return ec.resolvers.Query().LastVersions(rctx, fc.Args["days"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1194,6 +1214,17 @@ func (ec *executionContext) fieldContext_Query_lastVersions(ctx context.Context,
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Version", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_lastVersions_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
 	}
 	return fc, nil
 }
@@ -5020,6 +5051,22 @@ func (ec *executionContext) marshalODateVersionCount2ᚖgithubᚗcomᚋstenicᚋ
 		return graphql.Null
 	}
 	return ec._DateVersionCount(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalInt(*v)
+	return res
 }
 
 func (ec *executionContext) unmarshalOSort2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐSort(ctx context.Context, v interface{}) (*model.Sort, error) {

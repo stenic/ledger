@@ -47,7 +47,7 @@ type Query {
   environments: [Environment!]!
   applications: [Application!]!
   locations: [Location!]!
-  lastVersions: [Version]!
+  lastVersions(days: Int): [Version]!
   versionCountPerDay: [DateVersionCount]!
   totalVersions: Int!
 }
