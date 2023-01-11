@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/stenic/ledger/compare/v1.8.0...v1.9.0) (2023-01-11)
+
+
+### Features
+
+* **agent:** enable leader election ([4e9c0f2](https://github.com/stenic/ledger/commit/4e9c0f27d56f0b87931d21dac2d7f5ba1ef83741))
+* Limit dashboard pi chart ([b2b7ac0](https://github.com/stenic/ledger/commit/b2b7ac093a0292c423643b50d57cb9da492be476))
+
 # [1.8.0](https://github.com/stenic/ledger/compare/v1.7.5...v1.8.0) (2023-01-03)
 
 
