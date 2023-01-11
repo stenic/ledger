@@ -135,7 +135,7 @@ func GetAllLast(days *int) []Version {
 	if days != nil {
 		switch storage.EngineType {
 		case "mysql":
-			filter = fmt.Sprintf("WHERE timestamp > DATE_SUB(NOW(), INTERVAL %d DAYS)", *days)
+			filter = fmt.Sprintf("WHERE timestamp > NOW() - INTERVAL %d DAY", *days)
 		case "sqlite":
 			filter = fmt.Sprintf("where timestamp > date('now', '-%d days')", *days)
 		}
