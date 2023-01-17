@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/stenic/ledger/compare/v1.11.0...v1.12.0) (2023-01-17)
+
+
+### Bug Fixes
+
+* Ignore self by defaul. [#30](https://github.com/stenic/ledger/issues/30) ([6ed489f](https://github.com/stenic/ledger/commit/6ed489f359b4c1cdfff4f29263fd136b124fcb0d))
+
+
+### Features
+
+* Add ignore annotation ([0f0ddf9](https://github.com/stenic/ledger/commit/0f0ddf956852ffbae8ceca23bb6db8c87a1d6920)), closes [#30](https://github.com/stenic/ledger/issues/30)
+
 # [1.11.0](https://github.com/stenic/ledger/compare/v1.10.0...v1.11.0) (2023-01-17)
 
 
