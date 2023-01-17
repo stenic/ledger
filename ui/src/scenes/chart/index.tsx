@@ -44,6 +44,9 @@ const Chart = () => {
     const apps = [...new Set(d.versions.map((i) => i.application.name))].filter(
       (n) => n.length > 0
     );
+    const locs = [...new Set(d.versions.map((i) => i.location.name))].filter(
+      (n) => n.length > 0
+    );
 
     // Create empty data list
     let format = getDates(new Date(minDate), new Date(maxDate));
@@ -81,8 +84,11 @@ const Chart = () => {
 
     return {
       versions: Object.values(format),
-      envs: envs,
-      apps: apps,
+      keys: {
+        environment: envs,
+        application: apps,
+        location: locs,
+      },
     };
   };
 
@@ -97,6 +103,9 @@ const Chart = () => {
           }
           timestamp
           environment {
+            name
+          }
+          location {
             name
           }
           version
@@ -136,6 +145,7 @@ const Chart = () => {
             >
               <MenuItem value="environment">Environment</MenuItem>
               <MenuItem value="application">Application</MenuItem>
+              <MenuItem value="location">Location</MenuItem>
             </Select>
           </FormControl>
         </Box>
@@ -144,7 +154,7 @@ const Chart = () => {
             theme={nivoTheme}
             colors={{ scheme: "purple_orange" }}
             data={data?.versions}
-            keys={chartContent === "environment" ? data.envs : data.apps}
+            keys={data.keys[chartContent]}
             indexBy="key"
             margin={{ top: 50, right: 130, bottom: 150, left: 60 }}
             axisBottom={{ tickRotation: 45 }}
