@@ -72,6 +72,12 @@ const Chart = () => {
           (format[key][item.application.name]
             ? format[key][item.application.name]
             : 0) + 1);
+
+      item.location &&
+        (format[key][item.location.name] =
+          (format[key][item.location.name]
+            ? format[key][item.location.name]
+            : 0) + 1);
     });
 
     // Ensure dates are in order
