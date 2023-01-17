@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/stenic/ledger/compare/v1.10.0...v1.11.0) (2023-01-17)
+
+
+### Features
+
+* **chart:** Add Location filter ([e3a7e46](https://github.com/stenic/ledger/commit/e3a7e4669ef7eeeeb8f402bcd91bf8bcbabbedcb))
+
 # [1.10.0](https://github.com/stenic/ledger/compare/v1.9.1...v1.10.0) (2023-01-17)
 
 
