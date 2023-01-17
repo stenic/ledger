@@ -6,6 +6,10 @@ metadata:
   labels:
     {{- include "ledger.labels" . | nindent 4 }}
     component: server
+  {{- if .Values.ledgerServer.ignoredAnnotation }}
+  annotations:
+    ledger.stenic.io/ignore: "true"
+  {{- end }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}

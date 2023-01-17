@@ -106,6 +106,7 @@ tolerations: []
 
 ledgerServer:
   enabled: true
+  ignoredAnnotation: true
   oidc:
     issuerURL: https://[keycloak-url]/auth/realms/[realm-name]
     clientID: ledger
@@ -119,6 +120,7 @@ ledgerServer:
 
 ledgerAgent:
   enabled: true
+  ignoredAnnotation: true
   endpoint: http://ledger-server
   location: ""
   namespaced: false
