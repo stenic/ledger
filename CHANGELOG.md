@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.10.0](https://github.com/stenic/ledger/compare/v1.9.1...v1.10.0) (2023-01-17)
+
+
+### Features
+
+* Add browser notifications ([d4f23ee](https://github.com/stenic/ledger/commit/d4f23eea658c0c75340602310f7147685c8dc65f))
+* **chart:** Add Location filter ([225a91e](https://github.com/stenic/ledger/commit/225a91e3112bcdf9aa421adf05128ecfcfccafe5))
+
 ## [1.9.1](https://github.com/stenic/ledger/compare/v1.9.0...v1.9.1) (2023-01-11)
 
 
