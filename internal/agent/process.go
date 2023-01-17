@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -11,6 +12,18 @@ import (
 var cache = map[string]int64{}
 
 func processObject(objectMeta metav1.ObjectMeta, podTemplate v1.PodTemplateSpec) error {
+	if val, ok := objectMeta.Annotations[LedgerAnnotationIgnore]; ok {
+		if b, _ := strconv.ParseBool(val); b {
+			// Skip processing if the object was processed in the last 10 seconds.
+			logrus.WithFields(logrus.Fields{
+				"namespace":  objectMeta.Namespace,
+				"name":       objectMeta.Name,
+				"generation": objectMeta.Generation,
+			}).Trace("Skipping, has ignore annotation")
+			return nil
+		}
+	}
+
 	val, ok := cache[string(objectMeta.UID)]
 	if ok && val == objectMeta.Generation {
 		// Skip processing if the object was processed in the last 10 seconds.
