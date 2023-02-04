@@ -15,7 +15,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import { useTranslation } from "react-i18next";
 
 const Timeline = ({ data }: { data: any }) => {
   return (
@@ -90,16 +90,18 @@ const Pie = ({ data }: { data: any }) => {
 };
 
 const LastTable = ({ data }: { data: Array<VersionData> }) => {
+  const { t } = useTranslation();
+
   return (
     <TableContainer sx={{ maxHeight: "100%" }}>
       <Table sx={{ minWidth: 650 }} stickyHeader>
         <TableHead>
           <TableRow>
-            <TableCell>Timestamp</TableCell>
-            <TableCell>Application</TableCell>
-            <TableCell>Environment</TableCell>
-            <TableCell>Location</TableCell>
-            <TableCell align="right">Version</TableCell>
+            <TableCell>{t("table_version_timestamp")}</TableCell>
+            <TableCell>{t("table_version_application")}</TableCell>
+            <TableCell>{t("table_version_environment")}</TableCell>
+            <TableCell>{t("table_version_location")}</TableCell>
+            <TableCell align="right">{t("table_version_version")}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -125,6 +127,7 @@ const LastTable = ({ data }: { data: Array<VersionData> }) => {
 
 const Dashboard = () => {
   const auth = useAuth();
+  const { t } = useTranslation();
 
   const { data, isLoading } = useGqlQuery(
     ["stats", "version"],
@@ -184,12 +187,14 @@ const Dashboard = () => {
   return (
     <Box m="20px">
       <Header
-        title="Dashboard"
-        subtitle={`Hello ${auth.user?.profile.preferred_username}, welcome to your dashboard`}
+        title={t("dashboard_title")}
+        subtitle={t("dashboard_welcome", {
+          username: auth.user?.profile.preferred_username,
+        })}
       />
 
       {isLoading ? (
-        <div>Loading</div>
+        <div>{t("app_loading")}</div>
       ) : (
         <Box
           sx={{
@@ -204,14 +209,14 @@ const Dashboard = () => {
           }}
         >
           <StatBox
-            title="Total"
+            title={t("dashboard_versions_title")}
+            description={t("dashboard_versions_description")}
             value={data?.totalVersions}
-            description="Total number of versions"
           />
           <StatBox
-            title="Applications"
+            title={t("dashboard_applications_title")}
+            description={t("dashboard_applications_description")}
             value={data?.applications.length || "..."}
-            description="Unique applications"
           />
           <Box
             sx={{
@@ -222,14 +227,14 @@ const Dashboard = () => {
             <Timeline data={data.versionCountPerDay} />
           </Box>
           <StatBox
-            title="Environments"
+            title={t("dashboard_environments_title")}
+            description={t("dashboard_environments_description")}
             value={data?.environments.length || "..."}
-            description="Unique environments"
           />
           <StatBox
-            title="Locations"
+            title={t("dashboard_locations_title")}
+            description={t("dashboard_locations_description")}
             value={data?.locations.length || "..."}
-            description="Unique locations"
           />
           <Box
             sx={{

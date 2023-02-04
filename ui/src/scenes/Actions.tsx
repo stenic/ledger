@@ -17,6 +17,7 @@ import { LocationData } from "../types/location";
 import { useSnackbar } from "notistack";
 import { useGqlQuery, useQueryClient } from "../utils/http";
 import gql from "graphql-tag";
+import { useTranslation } from "react-i18next";
 
 interface TFormData {
   environment: string;
@@ -26,6 +27,7 @@ interface TFormData {
 }
 
 const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
+  const { t } = useTranslation();
   const defaultFormData = {
     environment: "",
     location: "",
@@ -93,11 +95,9 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
 
   return (
     <>
-      <DialogTitle>Add version</DialogTitle>
+      <DialogTitle>{t("form_version_title")}</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          Fill out the form below to add a new version.
-        </DialogContentText>
+        <DialogContentText>{t("form_version_description")}</DialogContentText>
         <form onSubmit={handleSubmit}>
           <Autocomplete
             disablePortal
@@ -108,7 +108,11 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
             }}
             options={data?.locations || []}
             renderInput={(params) => (
-              <TextField name="location" {...params} label="Location" />
+              <TextField
+                name="location"
+                {...params}
+                label={t("type_location")}
+              />
             )}
           />
           <Autocomplete
@@ -120,7 +124,11 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
             }}
             options={data?.environments || []}
             renderInput={(params) => (
-              <TextField name="environment" {...params} label="Environment" />
+              <TextField
+                name="environment"
+                {...params}
+                label={t("type_environment")}
+              />
             )}
           />
           <Autocomplete
@@ -132,7 +140,11 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
             }}
             options={data?.applications || []}
             renderInput={(params) => (
-              <TextField name="application" {...params} label="Application" />
+              <TextField
+                name="application"
+                {...params}
+                label={t("type_application")}
+              />
             )}
           />
           <TextField
@@ -140,17 +152,17 @@ const AddVersionDialog = ({ handleClose }: { handleClose: () => void }) => {
             onChange={(event) => {
               setFormData({ ...formData, version: event.target.value });
             }}
-            label="Version"
+            label={t("type_version")}
             fullWidth
           />
         </form>
       </DialogContent>
       <DialogActions>
         <Button variant="contained" onClick={handleClose}>
-          Cancel
+          {t("form_version_cancel")}
         </Button>
         <Button variant="contained" onClick={handleSubmit}>
-          Add version
+          {t("form_version_submit")}
         </Button>
       </DialogActions>
     </>

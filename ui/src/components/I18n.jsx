@@ -1,0 +1,33 @@
+import i18n from "i18next";
+import Backend from "i18next-http-backend";
+import LanguageDetector from "i18next-browser-languagedetector";
+import { initReactI18next } from "react-i18next";
+
+// Translations using i18next
+// - Options: https://www.i18next.com/overview/configuration-options
+// - Browser Language Detector: https://github.com/i18next/i18next-browser-languageDetector
+// - HTTP Backend (load files via fetch): https://github.com/i18next/i18next-http-backend
+//
+// See example project here:
+// https://github.com/i18next/react-i18next/tree/master/example/react
+
+i18n
+  .use(Backend)
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    fallbackLng: "en",
+    returnNull: false,
+    debug: false,
+    interpolation: {
+      escapeValue: false, // not needed for react as it escapes by default
+    },
+    backend: {
+      loadPath: "/static/langs/{{lng}}.json",
+    },
+    detection: {
+      lookupLocalStorage: "setting.language",
+    },
+  });
+
+export default i18n;

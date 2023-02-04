@@ -14,9 +14,11 @@ import { useAuth } from "react-oidc-context";
 import Chip from "@mui/material/Chip";
 import { Link } from "react-router-dom";
 import Divider from "@mui/material/Divider";
+import { useTranslation } from "react-i18next";
 
 const TopBar = () => {
   const auth = useAuth();
+  const { t } = useTranslation();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | undefined>(
     undefined
@@ -51,11 +53,13 @@ const TopBar = () => {
       sx={{ mt: "45px", floodColor: "#1F2A40" }}
     >
       <MenuItem component={Link} to="/profile" onClick={handleMenuClose}>
-        Profile
+        {t("app_profile")}
       </MenuItem>
-      <MenuItem onClick={handleMenuClose}>My Account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>{t("app_my_account")}</MenuItem>
       <Divider />
-      <MenuItem onClick={() => void auth.removeUser()}>Logout</MenuItem>
+      <MenuItem onClick={() => void auth.removeUser()}>
+        {t("app_logout")}
+      </MenuItem>
     </Menu>
   );
 
@@ -71,7 +75,7 @@ const TopBar = () => {
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Box>
-            <IconButton
+            {/* <IconButton
               size="large"
               aria-label="show 4 new mails"
               color="inherit"
@@ -88,7 +92,7 @@ const TopBar = () => {
               <Badge badgeContent={17} color="error">
                 <NotificationsIcon />
               </Badge>
-            </IconButton>
+            </IconButton> */}
 
             <Chip
               icon={<AccountCircle />}

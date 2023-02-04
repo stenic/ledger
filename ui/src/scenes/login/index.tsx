@@ -13,9 +13,11 @@ import Avatar from "@mui/material/Avatar";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Header from "../../components/Header";
 import Divider from "@mui/material/Divider";
+import { useTranslation } from "react-i18next";
 
 const LoginForm = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
   const [formOpen, setFormOpen] = useState(defaultOpen);
+  const { t } = useTranslation();
 
   const openForm = () => {
     setFormOpen(true);
@@ -40,7 +42,7 @@ const LoginForm = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
           }}
         >
           <Link href="#" onClick={openForm}>
-            Local Sign In
+            {t("login_local")}
           </Link>
         </Box>
       )}
@@ -51,7 +53,7 @@ const LoginForm = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
             margin="dense"
             required
             id="email"
-            label="Email Address"
+            label={t("login_email")}
             name="email"
             autoComplete="email"
             fullWidth
@@ -62,7 +64,7 @@ const LoginForm = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
             required
             fullWidth
             name="password"
-            label="Password"
+            label={t("login_password")}
             type="password"
             id="password"
             autoComplete="current-password"
@@ -70,7 +72,7 @@ const LoginForm = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
           <div>
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
+              label={t("login_remember")}
             />
           </div>
           <Button
@@ -79,17 +81,17 @@ const LoginForm = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            {t("login_signin")}
           </Button>
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2" color="secondary">
-                Forgot password?
+                {t("login_forgot_password")}
               </Link>
             </Grid>
             <Grid item>
               <Link href="#" variant="body2" color="secondary">
-                Don't have an account? Sign Up
+                {t("login_signup")}
               </Link>
             </Grid>
           </Grid>
@@ -101,6 +103,7 @@ const LoginForm = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
 
 const LoginOidc = () => {
   const auth = useAuth();
+  const { t } = useTranslation();
 
   return (
     <Button
@@ -111,12 +114,14 @@ const LoginOidc = () => {
       sx={{ mt: 3, mb: 0 }}
       onClick={() => void auth.signinRedirect()}
     >
-      OIDC Sign In
+      {t("login_oidc")}
     </Button>
   );
 };
 
 const Login = () => {
+  const { t } = useTranslation();
+
   return (
     <Box
       sx={{
@@ -140,7 +145,7 @@ const Login = () => {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Sign in
+              {t("login_signin")}
             </Typography>
           </Box>
 

@@ -14,41 +14,42 @@ import { useLocation } from "react-router-dom";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import FormatListBulletedOutlinedIcon from "@mui/icons-material/FormatListBulletedOutlined";
-const drawerWidth = 240;
+import { useTranslation } from "react-i18next";
 
+const drawerWidth = 240;
 const menu = {
   main: [
     {
-      title: "Dashboard",
+      title: "menu_dashboard",
       icon: <HouseOutlined />,
       to: "/",
     },
     {
-      title: "Chart",
+      title: "menu_chart",
       icon: <BarChartOutlinedIcon />,
       to: "/chart",
     },
   ],
   secondary: [
     {
-      title: "Versions",
+      title: "menu_versions",
       icon: <LibraryBooksIcon />,
       to: "/versions",
     },
     {
-      title: "Last",
+      title: "menu_last",
       icon: <LibraryBooksIcon />,
       to: "/last",
     },
     {
-      title: "Feed",
+      title: "menu_feed",
       icon: <FormatListBulletedOutlinedIcon />,
       to: "/feed",
     },
   ],
   bottom: [
     {
-      title: "Settings",
+      title: "menu_settings",
       icon: <SettingsIcon />,
       to: "/settings",
     },
@@ -57,6 +58,7 @@ const menu = {
 
 const SideBar = () => {
   const location = useLocation();
+  const { t } = useTranslation();
 
   return (
     <Box>
@@ -91,7 +93,7 @@ const SideBar = () => {
                   selected={item.to === location.pathname}
                 >
                   <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.title} />
+                  <ListItemText primary={t(item.title)} />
                 </ListItemButton>
               </ListItem>
             ))}
@@ -107,7 +109,7 @@ const SideBar = () => {
                   selected={item.to === location.pathname}
                 >
                   <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.title} />
+                  <ListItemText primary={t(item.title)} />
                 </ListItemButton>
               </ListItem>
             ))}
@@ -124,7 +126,7 @@ const SideBar = () => {
                     selected={item.to === location.pathname}
                   >
                     <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.title} />
+                    <ListItemText primary={t(item.title)} />
                   </ListItemButton>
                 </ListItem>
               ))}

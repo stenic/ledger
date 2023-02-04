@@ -6,9 +6,11 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useTranslation } from "react-i18next";
 
 const Profile = () => {
   const auth = useAuth();
+  const { t } = useTranslation();
 
   return (
     <Box m="20px">
@@ -20,7 +22,7 @@ const Profile = () => {
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography color="#4cceac" variant="h5">
-            Token dump
+            {t("profile_token")}
           </Typography>
         </AccordionSummary>
         <AccordionDetails>

@@ -10,8 +10,11 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useGqlQuery } from "../../utils/http";
 import gql from "graphql-tag";
 import { VersionData } from "../../types/version";
+import { useTranslation } from "react-i18next";
 
 const Chart = () => {
+  const { t } = useTranslation();
+
   const transformCb = (d: { versions: VersionData[] }) => {
     const getDates = (startDate: Date, stopDate: Date) => {
       var dates: any = {};
@@ -137,11 +140,16 @@ const Chart = () => {
 
   return (
     <Box m="20px">
-      <Header title="Deploy" subtitle={chartContent + " deploys per day"} />
+      <Header
+        title={t("chart_title")}
+        subtitle={t("chart_subtitle", { type: chartContent })}
+      />
       <Box height="80vh">
         <Box maxWidth={150}>
           <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Group by</InputLabel>
+            <InputLabel id="demo-simple-select-label">
+              {t("chart_group_by")}
+            </InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
@@ -149,9 +157,9 @@ const Chart = () => {
               label="Age"
               onChange={handleChange}
             >
-              <MenuItem value="environment">Environment</MenuItem>
-              <MenuItem value="application">Application</MenuItem>
-              <MenuItem value="location">Location</MenuItem>
+              <MenuItem value="environment">{t("type_environment")}</MenuItem>
+              <MenuItem value="application">{t("type_application")}</MenuItem>
+              <MenuItem value="location">{t("type_location")}</MenuItem>
             </Select>
           </FormControl>
         </Box>

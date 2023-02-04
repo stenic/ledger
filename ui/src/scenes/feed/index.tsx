@@ -11,8 +11,10 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import LinearProgress from "@mui/material/LinearProgress";
 import { VersionData } from "../../types/version";
+import { useTranslation, Trans } from "react-i18next";
 
 const Feed = () => {
+  const { t } = useTranslation();
   const { data, isLoading } = useGqlQuery(
     ["feed", "version"],
     gql`
@@ -37,7 +39,7 @@ const Feed = () => {
 
   return (
     <Box m="20px">
-      <Header title="Feed" subtitle="Live feed" />
+      <Header title={t("feed_title")} subtitle={t("feed_subtitle")} />
       <List sx={{ width: "100%", bgcolor: "background.paper" }}>
         {isLoading && <LinearProgress />}
         {data &&
@@ -81,20 +83,29 @@ const Feed = () => {
                         variant="body2"
                         color="text.primary"
                       >
-                        Deployed{" "}
-                        <Typography component="span" sx={{ fontWeight: 600 }}>
-                          {version.application.name
-                            ? version.application.name + ":"
-                            : ""}
-                          {version.version}
-                        </Typography>{" "}
-                        to{" "}
-                        <Typography component="span" sx={{ fontWeight: 600 }}>
-                          {version.location.name === ""
-                            ? ""
-                            : version.location.name + "/"}
-                          {version.environment.name}
-                        </Typography>
+                        <Trans
+                          i18nKey="feed_item_deployed"
+                          t={t}
+                          values={{
+                            item: version.application.name
+                              ? version.application.name + ":" + version.version
+                              : version.version,
+                            target:
+                              version.location.name === ""
+                                ? version.environment.name
+                                : version.location.name +
+                                  "/" +
+                                  version.environment.name,
+                          }}
+                          components={{
+                            b: (
+                              <Typography
+                                component="span"
+                                sx={{ fontWeight: 600 }}
+                              ></Typography>
+                            ),
+                          }}
+                        />
                       </Typography>
                     </React.Fragment>
                   }

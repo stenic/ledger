@@ -1,19 +1,28 @@
 import {
   Box,
+  FormControl,
   FormControlLabel,
   FormGroup,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   Switch,
   Typography,
 } from "@mui/material";
 import Header from "../../components/Header";
 import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 const Settings = () => {
+  const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const [notificationEnabled, setNotificationEnabled] = useState(
     localStorage.getItem("setting.notification.enabled") === "granted"
   );
+  const [language, setLanguage] = useState(i18n.language);
 
   useEffect(() => {
     if (localStorage.getItem("setting.notification.enabled") === null) {
@@ -52,9 +61,14 @@ const Settings = () => {
     setNotificationEnabled(checked);
   };
 
+  const handleChange: (event: SelectChangeEvent) => void = (event) => {
+    setLanguage(event.target.value);
+    i18n.changeLanguage(event.target.value);
+  };
+
   return (
     <Box m="20px">
-      <Header title="Settings" subtitle="Application settings" />
+      <Header title={t("settings_title")} subtitle={t("settings_subtitle")} />
 
       <Box
         sx={{
@@ -72,12 +86,27 @@ const Settings = () => {
             gridColumn: "span 6",
           }}
         >
-          <Typography variant="h3">Notifications</Typography>
+          <Typography variant="h3">{t("settings_notifications")}</Typography>
           <FormControlLabel
             control={<Switch checked={notificationEnabled} />}
-            label="Enable browser notifications"
+            label={t("settings_notifications_toggle")}
             onChange={handleNotificationSetting}
           />
+          <Typography variant="h3">{t("settings_language")}</Typography>
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Language</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={language}
+              label="Language"
+              onChange={handleChange}
+            >
+              <MenuItem value={""}>Auto-detect</MenuItem>
+              <MenuItem value={"en"}>EN</MenuItem>
+              <MenuItem value={"nl"}>NL</MenuItem>
+            </Select>
+          </FormControl>
         </FormGroup>
       </Box>
     </Box>

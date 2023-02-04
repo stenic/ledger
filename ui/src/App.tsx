@@ -16,26 +16,29 @@ import Toolbar from "@mui/material/Toolbar";
 import { useAuth } from "react-oidc-context";
 import { SnackbarProvider } from "notistack";
 import Websockets from "./components/Websocket";
+import "./components/I18n";
+import { useTranslation } from "react-i18next";
 
 const App = () => {
   const auth = useAuth();
+  const { t } = useTranslation("aa");
 
   switch (auth.activeNavigator) {
     case "signinSilent":
-      return <div>Signing you in...</div>;
+      return <div>{t("signin_silent")}</div>;
     case "signoutRedirect":
-      return <div>Signing you out...</div>;
+      return <div>{t("app_signout_redirect")}</div>;
   }
 
   if (auth.isLoading) {
-    return <div>Loading...</div>;
+    return <div>{t("app_loading")}</div>;
   }
 
   if (auth.error) {
     if (auth.error.message === "Token is not active") {
       window.location.reload();
     }
-    return <div>Oops... {auth.error.message}</div>;
+    return <div>{t("app_error", { error: auth.error.message })}</div>;
   }
 
   if (auth.isAuthenticated) {
