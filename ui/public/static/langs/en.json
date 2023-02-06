@@ -42,6 +42,7 @@
 	"settings_subtitle": "Application settings",
 	"settings_notifications": "Notifications",
 	"settings_notifications_toggle": "Enable browser notifications",
+	"settings_language": "Language",
 	"versions_title": "Versions",
 	"versions_subtitle": "List of versions",
 	"form_version_title": "Add version",
