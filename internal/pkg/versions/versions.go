@@ -88,8 +88,9 @@ type CountResult struct {
 	Count     int
 }
 
-func CountByDay() []CountResult {
-	rows, err := storage.Db.Query("SELECT count(id), DATE(`timestamp`) AS date_formatted FROM versions GROUP BY date_formatted")
+func CountByDay(filter *query.VersionFilter) []CountResult {
+	where, args := query.GetWhereParts(filter)
+	rows, err := storage.Db.Query(fmt.Sprintf("SELECT count(id), DATE(`timestamp`) AS date_formatted FROM versions WHERE %s GROUP BY date_formatted", where), args...)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -109,11 +110,12 @@ func CountByDay() []CountResult {
 	return items
 }
 
-func CountTotal() *int {
-	if row := storage.Db.QueryRow("SELECT count(id) FROM versions"); row != nil {
+func CountTotal(filter *query.VersionFilter) *int {
+	where, args := query.GetWhereParts(filter)
+	if row := storage.Db.QueryRow(fmt.Sprintf("SELECT count(id) FROM versions WHERE %s", where), args...); row != nil {
 		var count int
 		if err := row.Scan(&count); err != nil {
-			logrus.Fatal(err)
+			logrus.WithField("repo", "versions.CountTotal").Error(err)
 		}
 		return &count
 	}

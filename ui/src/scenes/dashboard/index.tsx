@@ -1,153 +1,98 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import Header from "../../components/Header";
 import { useAuth } from "react-oidc-context";
-import { ResponsiveTimeRange } from "@nivo/calendar";
 import { useGqlQuery } from "../../utils/http";
 import gql from "graphql-tag";
-import FlexBetween from "../../components/FlexBetween";
-import { nivoTheme } from "../../theme";
-import { ResponsivePie } from "@nivo/pie";
 import { VersionData } from "../../types/version";
-
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import { useTranslation } from "react-i18next";
-
-const Timeline = ({ data }: { data: any }) => {
-  return (
-    <ResponsiveTimeRange
-      data={data}
-      to={new Date().toISOString().substring(0, 10)}
-      emptyColor="#333"
-      colors={["#61cdbb", "#97e3d5", "#e8c1a0", "#f47560"]}
-      // margin={{ top: 40, right: 40, bottom: 100, left: 40 }}
-      dayBorderWidth={3}
-      dayBorderColor="#1F2A40"
-      theme={{
-        ...nivoTheme,
-        labels: { text: { fill: "#fff" } },
-      }}
-    />
-  );
-};
-
-const StatBox = ({
-  title,
-  value,
-  icon,
-  description,
-}: {
-  title: string;
-  value: string;
-  icon?: any;
-  description: string;
-}) => {
-  return (
-    <Box
-      gridColumn="span 2"
-      gridRow="span 1"
-      display="flex"
-      flexDirection="column"
-      justifyContent="space-between"
-      p="1.25 rem 1rem"
-      flex="1 1 100%"
-    >
-      <FlexBetween>
-        <Typography variant="h6">{title}</Typography>
-        {icon}
-      </FlexBetween>
-      <Typography variant="h3" fontWeight="600">
-        {value}
-      </Typography>
-      <Typography>{description}</Typography>
-    </Box>
-  );
-};
-
-const Pie = ({ data }: { data: any }) => {
-  return (
-    <ResponsivePie
-      data={data}
-      margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-      innerRadius={0.5}
-      padAngle={0.7}
-      cornerRadius={3}
-      activeOuterRadiusOffset={8}
-      borderWidth={1}
-      arcLinkLabelsSkipAngle={10}
-      arcLinkLabelsThickness={2}
-      arcLabelsSkipAngle={10}
-      theme={{
-        ...nivoTheme,
-        labels: { text: { fill: "#fff" } },
-      }}
-    />
-  );
-};
-
-const LastTable = ({ data }: { data: Array<VersionData> }) => {
-  const { t } = useTranslation();
-
-  return (
-    <TableContainer sx={{ maxHeight: "100%" }}>
-      <Table sx={{ minWidth: 650 }} stickyHeader>
-        <TableHead>
-          <TableRow>
-            <TableCell>{t("table_version_timestamp")}</TableCell>
-            <TableCell>{t("table_version_application")}</TableCell>
-            <TableCell>{t("table_version_environment")}</TableCell>
-            <TableCell>{t("table_version_location")}</TableCell>
-            <TableCell align="right">{t("table_version_version")}</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map((row: VersionData) => (
-            <TableRow
-              key={row.id}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell>{row.timestamp}</TableCell>
-              <TableCell component="th" scope="row">
-                {row.application.name}
-              </TableCell>
-              <TableCell>{row.environment.name}</TableCell>
-              <TableCell>{row.location.name}</TableCell>
-              <TableCell align="right">{row.version}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-};
+import { LocationData } from "../../types/location";
+import { EnvironmentData } from "../../types/environment";
+import { ApplicationData } from "../../types/application";
+import { Filter } from "./filters";
+import { Pie } from "./pie";
+import { Timeline } from "./timeline";
+import { StatBox } from "./statbox";
+import { LastTable } from "./table";
+import { useUrlSearchParams } from "use-url-search-params";
 
 const Dashboard = () => {
   const auth = useAuth();
   const { t } = useTranslation();
 
+  // const [dateFilter, setDateFilter] = useHashParam("dateFilter", "");
+  const [params, setParams] = useUrlSearchParams({
+    location: "",
+    environment: "",
+    application: "",
+  });
+
+  // const dateFilterHandler = (datum: any, event: any) => {
+  //   setDateFilter(datum.value ? datum.day : undefined);
+  // };
+
+  const filterHandler = (filters: {
+    location: string;
+    environment: string;
+    application: string;
+  }) => {
+    setParams({ ...params, ...filters });
+  };
+
   const { data, isLoading } = useGqlQuery(
-    ["stats", "version"],
+    [
+      "stats",
+      "version",
+      `${params.location}`,
+      `${params.environment}`,
+      `${params.application}`,
+    ],
     gql`
-      query {
-        environments {
+      query ($appFilter: String, $envFilter: String, $locFilter: String) {
+        environments(
+          filter: {
+            application: $appFilter
+            environment: $envFilter
+            location: $locFilter
+          }
+        ) {
           name
         }
-        applications {
+        applications(
+          filter: {
+            application: $appFilter
+            environment: $envFilter
+            location: $locFilter
+          }
+        ) {
           name
         }
-        locations {
+        locations(
+          filter: {
+            application: $appFilter
+            environment: $envFilter
+            location: $locFilter
+          }
+        ) {
           name
         }
-        totalVersions
-        versionCountPerDay {
+        totalVersions(
+          filter: {
+            application: $appFilter
+            environment: $envFilter
+            location: $locFilter
+          }
+        )
+        versionCountPerDay(
+          filter: {
+            application: $appFilter
+            environment: $envFilter
+            location: $locFilter
+          }
+        ) {
           day: timstamp
           value: count
         }
-        lastVersions(days: 7) {
+        lastVersions(days: 120) {
           id
           application {
             name
@@ -163,9 +108,33 @@ const Dashboard = () => {
         }
       }
     `,
-    {},
+    {
+      envFilter: params.environment,
+      appFilter: params.application,
+      locFilter: params.location,
+    },
     (d) => {
       let grouped: any = {};
+      // if (dateFilter) {
+      //   d.lastVersions = d.lastVersions.filter((e: VersionData) => {
+      //     return e.timestamp.substring(0, 10) === dateFilter;
+      //   });
+      // }
+      if (params.location) {
+        d.lastVersions = d.lastVersions.filter((e: VersionData) => {
+          return e.location.name.match(`${params.location}`);
+        });
+      }
+      if (params.application) {
+        d.lastVersions = d.lastVersions.filter((e: VersionData) => {
+          return e.application.name.match(`${params.application}`);
+        });
+      }
+      if (params.environment) {
+        d.lastVersions = d.lastVersions.filter((e: VersionData) => {
+          return e.environment.name.match(`${params.environment}`);
+        });
+      }
       d.lastVersions.forEach((e: VersionData) => {
         const key: string = [e.location.name, e.environment.name]
           .filter((e) => e.length > 0)
@@ -191,7 +160,19 @@ const Dashboard = () => {
         subtitle={t("dashboard_welcome", {
           username: auth.user?.profile.preferred_username,
         })}
-      />
+      >
+        <Filter
+          locations={data?.locations.map((l: LocationData) => l.name)}
+          environments={data?.environments.map((l: EnvironmentData) => l.name)}
+          applications={data?.applications.map((l: ApplicationData) => l.name)}
+          initialState={{
+            location: `${params.location}`,
+            environment: `${params.environment}`,
+            application: `${params.application}`,
+          }}
+          filterCallback={filterHandler}
+        />
+      </Header>
 
       {isLoading ? (
         <div>{t("app_loading")}</div>
@@ -224,7 +205,10 @@ const Dashboard = () => {
               gridColumn: "span 8",
             }}
           >
-            <Timeline data={data.versionCountPerDay} />
+            <Timeline
+              data={data.versionCountPerDay}
+              // clickHandler={dateFilterHandler}
+            />
           </Box>
           <StatBox
             title={t("dashboard_environments_title")}

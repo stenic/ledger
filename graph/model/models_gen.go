@@ -45,6 +45,12 @@ type Version struct {
 	Timestamp   string       `json:"timestamp"`
 }
 
+type VersionFilter struct {
+	Application *string `json:"application"`
+	Environment *string `json:"environment"`
+	Location    *string `json:"location"`
+}
+
 type VersionOrderByInput struct {
 	Application *Sort `json:"application"`
 	Environment *Sort `json:"environment"`

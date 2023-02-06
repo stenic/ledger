@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useWebSocket, { useEventSource } from "react-use-websocket";
+import useWebSocket from "react-use-websocket";
 import { useQueryClient } from "../utils/http";
 import { useSnackbar } from "notistack";
 import { useAuth } from "react-oidc-context";
@@ -22,8 +22,9 @@ const Websockets = () => {
     },
   });
 
-  let current: any;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
+    let current: any;
     if (lastMessage && lastMessage !== current) {
       queryClient.refetchQueries({ exact: false, stale: true });
       enqueueSnackbar("New version received!", { variant: "info" });

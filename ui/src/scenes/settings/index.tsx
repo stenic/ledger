@@ -16,13 +16,39 @@ import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 
-const Settings = () => {
+const LanguageForm = () => {
+  const { t } = useTranslation();
+  const [language, setLanguage] = useState(i18n.language);
+
+  const handleChange: (event: SelectChangeEvent) => void = (event) => {
+    setLanguage(event.target.value);
+    i18n.changeLanguage(event.target.value);
+  };
+
+  return (
+    <FormControl fullWidth>
+      <InputLabel id="language-label">{t("settings_language")}</InputLabel>
+      <Select
+        labelId="language-label"
+        value={language}
+        label={t("settings_language")}
+        onChange={handleChange}
+      >
+        <MenuItem value={""}>Browser</MenuItem>
+        <MenuItem value={"en"}>English</MenuItem>
+        <MenuItem value={"nl"}>Nederlands</MenuItem>
+      </Select>
+    </FormControl>
+  );
+};
+
+const NotificationForm = () => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
+
   const [notificationEnabled, setNotificationEnabled] = useState(
     localStorage.getItem("setting.notification.enabled") === "granted"
   );
-  const [language, setLanguage] = useState(i18n.language);
 
   useEffect(() => {
     if (localStorage.getItem("setting.notification.enabled") === null) {
@@ -61,10 +87,17 @@ const Settings = () => {
     setNotificationEnabled(checked);
   };
 
-  const handleChange: (event: SelectChangeEvent) => void = (event) => {
-    setLanguage(event.target.value);
-    i18n.changeLanguage(event.target.value);
-  };
+  return (
+    <FormControlLabel
+      control={<Switch checked={notificationEnabled} />}
+      label={t("settings_notifications_toggle")}
+      onChange={handleNotificationSetting}
+    />
+  );
+};
+
+const Settings = () => {
+  const { t } = useTranslation();
 
   return (
     <Box m="20px">
@@ -87,26 +120,15 @@ const Settings = () => {
           }}
         >
           <Typography variant="h3">{t("settings_notifications")}</Typography>
-          <FormControlLabel
-            control={<Switch checked={notificationEnabled} />}
-            label={t("settings_notifications_toggle")}
-            onChange={handleNotificationSetting}
-          />
+          <NotificationForm />
+        </FormGroup>
+        <FormGroup
+          sx={{
+            gridColumn: "span 6",
+          }}
+        >
           <Typography variant="h3">{t("settings_language")}</Typography>
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Language</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={language}
-              label="Language"
-              onChange={handleChange}
-            >
-              <MenuItem value={""}>Auto-detect</MenuItem>
-              <MenuItem value={"en"}>EN</MenuItem>
-              <MenuItem value={"nl"}>NL</MenuItem>
-            </Select>
-          </FormControl>
+          <LanguageForm />
         </FormGroup>
       </Box>
     </Box>

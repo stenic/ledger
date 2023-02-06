@@ -2,8 +2,11 @@ package applications
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
+	"github.com/sirupsen/logrus"
+	"github.com/stenic/ledger/internal/pkg/query"
 	"github.com/stenic/ledger/internal/storage"
 )
 
@@ -11,30 +14,19 @@ type Application struct {
 	Name string `json:"name"`
 }
 
-func GetAll() []Application {
-	versions, err := runQuery("select distinct application from versions")
+func GetAll(filter *query.VersionFilter) []Application {
+	where, args := query.GetWhereParts(filter)
+	rows, err := storage.Db.Query(fmt.Sprintf("SELECT DISTINCT application FROM versions WHERE %s", where), args...)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer rows.Close()
+
+	applications, err := mapRows(rows)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return versions
-}
-
-func runQuery(query string) ([]Application, error) {
-	stmt, err := storage.Db.Prepare(query)
-	if err != nil {
-		return nil, err
-	}
-	defer stmt.Close()
-	rows, err := stmt.Query()
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return mapRows(rows)
+	return applications
 }
 
 func mapRows(rows *sql.Rows) ([]Application, error) {

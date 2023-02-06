@@ -7,6 +7,7 @@ COPY ./cmd ./cmd
 COPY ./graph ./graph
 COPY ./internal ./internal
 COPY ./migrations ./migrations
+RUN go test ./... && go vet ./...
 RUN CGO_ENABLED=1 GOOS=linux go build -a -o ledger ./cmd/ledger
 
 

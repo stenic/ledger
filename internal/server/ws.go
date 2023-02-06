@@ -16,14 +16,14 @@ func wsHandler(authValidator auth.LedgerValidator) gin.HandlerFunc {
 		"scope": "websockets",
 	})
 
-	var count = *versions.CountTotal()
+	var count = *versions.CountTotal(nil)
 
 	ticker := time.NewTicker(5 * time.Second)
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
-				count = *versions.CountTotal()
+				count = *versions.CountTotal(nil)
 				logger.WithField("count", count).Trace("Refreshed version count")
 			}
 		}

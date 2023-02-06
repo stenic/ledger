@@ -2,8 +2,11 @@ package locations
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
+	"github.com/sirupsen/logrus"
+	"github.com/stenic/ledger/internal/pkg/query"
 	"github.com/stenic/ledger/internal/storage"
 )
 
@@ -11,30 +14,19 @@ type Location struct {
 	Name string `json:"name"`
 }
 
-func GetAll() []Location {
-	versions, err := runQuery("select distinct location from versions")
+func GetAll(filter *query.VersionFilter) []Location {
+	where, args := query.GetWhereParts(filter)
+	rows, err := storage.Db.Query(fmt.Sprintf("SELECT DISTINCT location FROM versions WHERE %s", where), args...)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer rows.Close()
+
+	locations, err := mapRows(rows)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return versions
-}
-
-func runQuery(query string) ([]Location, error) {
-	stmt, err := storage.Db.Prepare(query)
-	if err != nil {
-		return nil, err
-	}
-	defer stmt.Close()
-	rows, err := stmt.Query()
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return mapRows(rows)
+	return locations
 }
 
 func mapRows(rows *sql.Rows) ([]Location, error) {

@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
-	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -71,13 +70,13 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Applications       func(childComplexity int) int
-		Environments       func(childComplexity int) int
-		LastVersions       func(childComplexity int, days *int) int
-		Locations          func(childComplexity int) int
-		TotalVersions      func(childComplexity int) int
-		VersionCountPerDay func(childComplexity int) int
-		Versions           func(childComplexity int, orderBy *model.VersionOrderByInput) int
+		Applications       func(childComplexity int, filter *model.VersionFilter) int
+		Environments       func(childComplexity int, filter *model.VersionFilter) int
+		LastVersions       func(childComplexity int, days *int, filter *model.VersionFilter) int
+		Locations          func(childComplexity int, filter *model.VersionFilter) int
+		TotalVersions      func(childComplexity int, filter *model.VersionFilter) int
+		VersionCountPerDay func(childComplexity int, filter *model.VersionFilter) int
+		Versions           func(childComplexity int, orderBy *model.VersionOrderByInput, filter *model.VersionFilter) int
 	}
 
 	Version struct {
@@ -95,13 +94,13 @@ type MutationResolver interface {
 	Login(ctx context.Context, username string, password string) (*model.AuthPayload, error)
 }
 type QueryResolver interface {
-	Versions(ctx context.Context, orderBy *model.VersionOrderByInput) ([]*model.Version, error)
-	Environments(ctx context.Context) ([]*model.Environment, error)
-	Applications(ctx context.Context) ([]*model.Application, error)
-	Locations(ctx context.Context) ([]*model.Location, error)
-	LastVersions(ctx context.Context, days *int) ([]*model.Version, error)
-	VersionCountPerDay(ctx context.Context) ([]*model.DateVersionCount, error)
-	TotalVersions(ctx context.Context) (int, error)
+	Versions(ctx context.Context, orderBy *model.VersionOrderByInput, filter *model.VersionFilter) ([]*model.Version, error)
+	Environments(ctx context.Context, filter *model.VersionFilter) ([]*model.Environment, error)
+	Applications(ctx context.Context, filter *model.VersionFilter) ([]*model.Application, error)
+	Locations(ctx context.Context, filter *model.VersionFilter) ([]*model.Location, error)
+	LastVersions(ctx context.Context, days *int, filter *model.VersionFilter) ([]*model.Version, error)
+	VersionCountPerDay(ctx context.Context, filter *model.VersionFilter) ([]*model.DateVersionCount, error)
+	TotalVersions(ctx context.Context, filter *model.VersionFilter) (int, error)
 }
 
 type executableSchema struct {
@@ -190,14 +189,24 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.Applications(childComplexity), true
+		args, err := ec.field_Query_applications_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Applications(childComplexity, args["filter"].(*model.VersionFilter)), true
 
 	case "Query.environments":
 		if e.complexity.Query.Environments == nil {
 			break
 		}
 
-		return e.complexity.Query.Environments(childComplexity), true
+		args, err := ec.field_Query_environments_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Environments(childComplexity, args["filter"].(*model.VersionFilter)), true
 
 	case "Query.lastVersions":
 		if e.complexity.Query.LastVersions == nil {
@@ -209,28 +218,43 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.LastVersions(childComplexity, args["days"].(*int)), true
+		return e.complexity.Query.LastVersions(childComplexity, args["days"].(*int), args["filter"].(*model.VersionFilter)), true
 
 	case "Query.locations":
 		if e.complexity.Query.Locations == nil {
 			break
 		}
 
-		return e.complexity.Query.Locations(childComplexity), true
+		args, err := ec.field_Query_locations_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Locations(childComplexity, args["filter"].(*model.VersionFilter)), true
 
 	case "Query.totalVersions":
 		if e.complexity.Query.TotalVersions == nil {
 			break
 		}
 
-		return e.complexity.Query.TotalVersions(childComplexity), true
+		args, err := ec.field_Query_totalVersions_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.TotalVersions(childComplexity, args["filter"].(*model.VersionFilter)), true
 
 	case "Query.versionCountPerDay":
 		if e.complexity.Query.VersionCountPerDay == nil {
 			break
 		}
 
-		return e.complexity.Query.VersionCountPerDay(childComplexity), true
+		args, err := ec.field_Query_versionCountPerDay_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.VersionCountPerDay(childComplexity, args["filter"].(*model.VersionFilter)), true
 
 	case "Query.versions":
 		if e.complexity.Query.Versions == nil {
@@ -242,7 +266,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Versions(childComplexity, args["orderBy"].(*model.VersionOrderByInput)), true
+		return e.complexity.Query.Versions(childComplexity, args["orderBy"].(*model.VersionOrderByInput), args["filter"].(*model.VersionFilter)), true
 
 	case "Version.application":
 		if e.complexity.Version.Application == nil {
@@ -295,6 +319,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputNewVersion,
+		ec.unmarshalInputVersionFilter,
 		ec.unmarshalInputVersionOrderByInput,
 	)
 	first := true
@@ -401,13 +426,19 @@ type DateVersionCount {
 }
 
 type Query {
-  versions(orderBy: VersionOrderByInput): [Version!]!
-  environments: [Environment!]!
-  applications: [Application!]!
-  locations: [Location!]!
-  lastVersions(days: Int): [Version]!
-  versionCountPerDay: [DateVersionCount]!
-  totalVersions: Int!
+  versions(orderBy: VersionOrderByInput, filter: VersionFilter): [Version!]!
+  environments(filter: VersionFilter): [Environment!]!
+  applications(filter: VersionFilter): [Application!]!
+  locations(filter: VersionFilter): [Location!]!
+  lastVersions(days: Int, filter: VersionFilter): [Version]!
+  versionCountPerDay(filter: VersionFilter): [DateVersionCount]!
+  totalVersions(filter: VersionFilter): Int!
+}
+
+input VersionFilter {
+  application: String
+  environment: String
+  location: String
 }
 
 input NewVersion {
@@ -487,6 +518,36 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_applications_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.VersionFilter
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+		arg0, err = ec.unmarshalOVersionFilter2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersionFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_environments_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.VersionFilter
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+		arg0, err = ec.unmarshalOVersionFilter2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersionFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_lastVersions_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -499,6 +560,60 @@ func (ec *executionContext) field_Query_lastVersions_args(ctx context.Context, r
 		}
 	}
 	args["days"] = arg0
+	var arg1 *model.VersionFilter
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+		arg1, err = ec.unmarshalOVersionFilter2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersionFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_locations_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.VersionFilter
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+		arg0, err = ec.unmarshalOVersionFilter2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersionFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_totalVersions_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.VersionFilter
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+		arg0, err = ec.unmarshalOVersionFilter2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersionFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_versionCountPerDay_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.VersionFilter
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+		arg0, err = ec.unmarshalOVersionFilter2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersionFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg0
 	return args, nil
 }
 
@@ -514,6 +629,15 @@ func (ec *executionContext) field_Query_versions_args(ctx context.Context, rawAr
 		}
 	}
 	args["orderBy"] = arg0
+	var arg1 *model.VersionFilter
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+		arg1, err = ec.unmarshalOVersionFilter2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersionFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg1
 	return args, nil
 }
 
@@ -837,7 +961,6 @@ func (ec *executionContext) _Mutation_createVersion(ctx context.Context, field g
 	})
 	if err != nil {
 		ec.Error(ctx, err)
-		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -906,7 +1029,6 @@ func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.C
 	})
 	if err != nil {
 		ec.Error(ctx, err)
-		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -961,11 +1083,10 @@ func (ec *executionContext) _Query_versions(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Versions(rctx, fc.Args["orderBy"].(*model.VersionOrderByInput))
+		return ec.resolvers.Query().Versions(rctx, fc.Args["orderBy"].(*model.VersionOrderByInput), fc.Args["filter"].(*model.VersionFilter))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
-		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -1030,11 +1151,10 @@ func (ec *executionContext) _Query_environments(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Environments(rctx)
+		return ec.resolvers.Query().Environments(rctx, fc.Args["filter"].(*model.VersionFilter))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
-		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -1061,6 +1181,17 @@ func (ec *executionContext) fieldContext_Query_environments(ctx context.Context,
 			return nil, fmt.Errorf("no field named %q was found under type Environment", field.Name)
 		},
 	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_environments_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
 	return fc, nil
 }
 
@@ -1078,11 +1209,10 @@ func (ec *executionContext) _Query_applications(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Applications(rctx)
+		return ec.resolvers.Query().Applications(rctx, fc.Args["filter"].(*model.VersionFilter))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
-		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -1109,6 +1239,17 @@ func (ec *executionContext) fieldContext_Query_applications(ctx context.Context,
 			return nil, fmt.Errorf("no field named %q was found under type Application", field.Name)
 		},
 	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_applications_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
 	return fc, nil
 }
 
@@ -1126,11 +1267,10 @@ func (ec *executionContext) _Query_locations(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Locations(rctx)
+		return ec.resolvers.Query().Locations(rctx, fc.Args["filter"].(*model.VersionFilter))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
-		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -1157,6 +1297,17 @@ func (ec *executionContext) fieldContext_Query_locations(ctx context.Context, fi
 			return nil, fmt.Errorf("no field named %q was found under type Location", field.Name)
 		},
 	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_locations_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
 	return fc, nil
 }
 
@@ -1174,11 +1325,10 @@ func (ec *executionContext) _Query_lastVersions(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().LastVersions(rctx, fc.Args["days"].(*int))
+		return ec.resolvers.Query().LastVersions(rctx, fc.Args["days"].(*int), fc.Args["filter"].(*model.VersionFilter))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
-		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -1243,11 +1393,10 @@ func (ec *executionContext) _Query_versionCountPerDay(ctx context.Context, field
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().VersionCountPerDay(rctx)
+		return ec.resolvers.Query().VersionCountPerDay(rctx, fc.Args["filter"].(*model.VersionFilter))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
-		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -1276,6 +1425,17 @@ func (ec *executionContext) fieldContext_Query_versionCountPerDay(ctx context.Co
 			return nil, fmt.Errorf("no field named %q was found under type DateVersionCount", field.Name)
 		},
 	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_versionCountPerDay_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
 	return fc, nil
 }
 
@@ -1293,11 +1453,10 @@ func (ec *executionContext) _Query_totalVersions(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TotalVersions(rctx)
+		return ec.resolvers.Query().TotalVersions(rctx, fc.Args["filter"].(*model.VersionFilter))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
-		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -1320,6 +1479,17 @@ func (ec *executionContext) fieldContext_Query_totalVersions(ctx context.Context
 			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_totalVersions_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
 	return fc, nil
 }
 
@@ -1341,7 +1511,6 @@ func (ec *executionContext) _Query___type(ctx context.Context, field graphql.Col
 	})
 	if err != nil {
 		ec.Error(ctx, err)
-		return graphql.Null
 	}
 	if resTmp == nil {
 		return graphql.Null
@@ -1415,7 +1584,6 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	})
 	if err != nil {
 		ec.Error(ctx, err)
-		return graphql.Null
 	}
 	if resTmp == nil {
 		return graphql.Null
@@ -3553,6 +3721,50 @@ func (ec *executionContext) unmarshalInputNewVersion(ctx context.Context, obj in
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputVersionFilter(ctx context.Context, obj interface{}) (model.VersionFilter, error) {
+	var it model.VersionFilter
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"application", "environment", "location"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "application":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("application"))
+			it.Application, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "environment":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("environment"))
+			it.Environment, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "location":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("location"))
+			it.Location, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputVersionOrderByInput(ctx context.Context, obj interface{}) (model.VersionOrderByInput, error) {
 	var it model.VersionOrderByInput
 	asMap := map[string]interface{}{}
@@ -3769,7 +3981,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	})
 
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
 	for i, field := range fields {
 		innerCtx := graphql.WithRootFieldContext(ctx, &graphql.RootFieldContext{
 			Object: field.Name,
@@ -3785,26 +3996,17 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				return ec._Mutation_createVersion(ctx, field)
 			})
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "login":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_login(ctx, field)
 			})
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
 	return out
 }
 
@@ -3817,7 +4019,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	})
 
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
 	for i, field := range fields {
 		innerCtx := graphql.WithRootFieldContext(ctx, &graphql.RootFieldContext{
 			Object: field.Name,
@@ -3837,9 +4038,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_versions(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			}
 
@@ -3860,9 +4058,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_environments(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			}
 
@@ -3883,9 +4078,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_applications(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			}
 
@@ -3906,9 +4098,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_locations(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			}
 
@@ -3929,9 +4118,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_lastVersions(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			}
 
@@ -3952,9 +4138,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_versionCountPerDay(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			}
 
@@ -3975,9 +4158,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_totalVersions(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			}
 
@@ -4005,9 +4185,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		}
 	}
 	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
 	return out
 }
 
@@ -5106,6 +5283,14 @@ func (ec *executionContext) marshalOVersion2ᚖgithubᚗcomᚋstenicᚋledgerᚋ
 		return graphql.Null
 	}
 	return ec._Version(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOVersionFilter2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersionFilter(ctx context.Context, v interface{}) (*model.VersionFilter, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputVersionFilter(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOVersionOrderByInput2ᚖgithubᚗcomᚋstenicᚋledgerᚋgraphᚋmodelᚐVersionOrderByInput(ctx context.Context, v interface{}) (*model.VersionOrderByInput, error) {

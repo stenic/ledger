@@ -43,13 +43,19 @@ type DateVersionCount {
 }
 
 type Query {
-  versions(orderBy: VersionOrderByInput): [Version!]!
-  environments: [Environment!]!
-  applications: [Application!]!
-  locations: [Location!]!
-  lastVersions(days: Int): [Version]!
-  versionCountPerDay: [DateVersionCount]!
-  totalVersions: Int!
+  versions(orderBy: VersionOrderByInput, filter: VersionFilter): [Version!]!
+  environments(filter: VersionFilter): [Environment!]!
+  applications(filter: VersionFilter): [Application!]!
+  locations(filter: VersionFilter): [Location!]!
+  lastVersions(days: Int, filter: VersionFilter): [Version]!
+  versionCountPerDay(filter: VersionFilter): [DateVersionCount]!
+  totalVersions(filter: VersionFilter): Int!
+}
+
+input VersionFilter {
+  application: String
+  environment: String
+  location: String
 }
 
 input NewVersion {
