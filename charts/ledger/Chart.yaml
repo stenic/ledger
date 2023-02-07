@@ -2,8 +2,8 @@ apiVersion: v2
 name: ledger
 description: A Helm chart for Kubernetes
 type: application
-version: 0.16.0
-appVersion: 1.13.0
+version: 0.16.1
+appVersion: 1.13.1
 maintainers:
   - email: dries@stenic.io
     name: Stenic
