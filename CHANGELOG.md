@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/stenic/ledger/compare/v1.12.0...v1.13.0) (2023-02-07)
+
+
+### Bug Fixes
+
+* Add missing translation ([21b63f7](https://github.com/stenic/ledger/commit/21b63f71692a336c25f3c20a5a083b4d114da0da))
+
+
+### Features
+
+* Add dashboard filters ([753a174](https://github.com/stenic/ledger/commit/753a17407c7653be654d3a41b8a7c8dbf9a48f95))
+* Implement i18n. Fixed [#58](https://github.com/stenic/ledger/issues/58) ([eaa3310](https://github.com/stenic/ledger/commit/eaa3310af5c2c27c4e2f2df8e4bc04b9127698e4))
+
 # [1.12.0](https://github.com/stenic/ledger/compare/v1.11.0...v1.12.0) (2023-01-17)
 
 
