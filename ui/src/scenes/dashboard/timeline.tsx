@@ -1,5 +1,6 @@
 import { ResponsiveTimeRange } from "@nivo/calendar";
 import { nivoTheme } from "../../theme";
+import React from "react";
 
 export const Timeline = ({
   data,
@@ -8,6 +9,9 @@ export const Timeline = ({
   data: any;
   clickHandler?: (datum: any, event: React.MouseEvent) => void;
 }) => {
+  if (data.length == 0) {
+    return <div>No data</div>;
+  }
   return (
     <ResponsiveTimeRange
       data={data}
