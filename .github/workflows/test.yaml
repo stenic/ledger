@@ -21,6 +21,7 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v4
         with:
+          load: true
           push: false
           tags: 'ledger:${{ github.sha }}'
           cache-from: type=gha
