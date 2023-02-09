@@ -9,6 +9,7 @@ func (f VersionFilter) GetFilter() query.VersionFilter {
 		Application: *f.Application,
 		Location:    *f.Location,
 		Environment: *f.Environment,
+		Day:         *f.Day,
 	}
 }
 

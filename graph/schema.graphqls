@@ -9,6 +9,8 @@ enum Sort {
   desc
 }
 
+scalar Date
+
 type Version {
   id: ID!
   application: Application!
@@ -56,6 +58,7 @@ input VersionFilter {
   application: String
   environment: String
   location: String
+  day: Date
 }
 
 input NewVersion {

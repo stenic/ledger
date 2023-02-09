@@ -14,29 +14,34 @@ import { Timeline } from "./timeline";
 import { StatBox } from "./statbox";
 import { LastTable } from "./table";
 import { useUrlSearchParams } from "use-url-search-params";
+import { useCallback } from "react";
 
 const Dashboard = () => {
   const auth = useAuth();
   const { t } = useTranslation();
 
-  // const [dateFilter, setDateFilter] = useHashParam("dateFilter", "");
   const [params, setParams] = useUrlSearchParams({
     location: "",
     environment: "",
     application: "",
+    day: "",
   });
 
-  // const dateFilterHandler = (datum: any, event: any) => {
-  //   setDateFilter(datum.value ? datum.day : undefined);
-  // };
-
-  const filterHandler = (filters: {
-    location: string;
-    environment: string;
-    application: string;
-  }) => {
-    setParams({ ...params, ...filters });
+  const dateFilterHandler = (datum: any, event: any) => {
+    setParams({ ...params, day: datum.value ? datum.day : "" });
   };
+
+  const filterHandler = useCallback(
+    (filters: {
+      location: string;
+      environment: string;
+      application: string;
+      day: string;
+    }) => {
+      setParams({ ...params, ...filters });
+    },
+    [params]
+  );
 
   const { data, isLoading } = useGqlQuery(
     [
@@ -45,14 +50,21 @@ const Dashboard = () => {
       `${params.location}`,
       `${params.environment}`,
       `${params.application}`,
+      `${params.day}`,
     ],
     gql`
-      query ($appFilter: String, $envFilter: String, $locFilter: String) {
+      query (
+        $appFilter: String
+        $envFilter: String
+        $locFilter: String
+        $dayFilter: Date
+      ) {
         environments(
           filter: {
             application: $appFilter
             environment: $envFilter
             location: $locFilter
+            day: $dayFilter
           }
         ) {
           name
@@ -62,6 +74,7 @@ const Dashboard = () => {
             application: $appFilter
             environment: $envFilter
             location: $locFilter
+            day: $dayFilter
           }
         ) {
           name
@@ -71,6 +84,7 @@ const Dashboard = () => {
             application: $appFilter
             environment: $envFilter
             location: $locFilter
+            day: $dayFilter
           }
         ) {
           name
@@ -80,6 +94,7 @@ const Dashboard = () => {
             application: $appFilter
             environment: $envFilter
             location: $locFilter
+            day: $dayFilter
           }
         )
         versionCountPerDay(
@@ -87,6 +102,7 @@ const Dashboard = () => {
             application: $appFilter
             environment: $envFilter
             location: $locFilter
+            day: ""
           }
         ) {
           day: timstamp
@@ -112,14 +128,15 @@ const Dashboard = () => {
       envFilter: params.environment,
       appFilter: params.application,
       locFilter: params.location,
+      dayFilter: params.day,
     },
     (d) => {
       let grouped: any = {};
-      // if (dateFilter) {
-      //   d.lastVersions = d.lastVersions.filter((e: VersionData) => {
-      //     return e.timestamp.substring(0, 10) === dateFilter;
-      //   });
-      // }
+      if (params.day) {
+        d.lastVersions = d.lastVersions.filter((e: VersionData) => {
+          return e.timestamp.substring(0, 10) === params.day;
+        });
+      }
       if (params.location) {
         d.lastVersions = d.lastVersions.filter((e: VersionData) => {
           return e.location.name.match(`${params.location}`);
@@ -169,6 +186,7 @@ const Dashboard = () => {
             location: `${params.location}`,
             environment: `${params.environment}`,
             application: `${params.application}`,
+            day: `${params.day}`,
           }}
           filterCallback={filterHandler}
         />
@@ -207,7 +225,7 @@ const Dashboard = () => {
           >
             <Timeline
               data={data.versionCountPerDay}
-              // clickHandler={dateFilterHandler}
+              clickHandler={dateFilterHandler}
             />
           </Box>
           <StatBox

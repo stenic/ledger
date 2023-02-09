@@ -1,11 +1,16 @@
 package query
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/stenic/ledger/internal/storage"
+)
 
 type VersionFilter struct {
 	Application string
 	Location    string
 	Environment string
+	Day         string
 }
 
 func (f VersionFilter) getWhere() (string, []any) {
@@ -23,6 +28,15 @@ func (f VersionFilter) getWhere() (string, []any) {
 	if f.Location != "" {
 		query = append(query, "location LIKE ?")
 		values = append(values, "%"+f.Location+"%")
+	}
+	if f.Day != "" {
+		switch storage.EngineType {
+		case "mysql":
+			query = append(query, "DATE(timestamp) = ?")
+		case "sqlite":
+			query = append(query, "DATE(timestamp) = ?")
+		}
+		values = append(values, f.Day)
 	}
 
 	if len(query) == 0 {

@@ -49,6 +49,7 @@ type VersionFilter struct {
 	Application *string `json:"application"`
 	Environment *string `json:"environment"`
 	Location    *string `json:"location"`
+	Day         *string `json:"day"`
 }
 
 type VersionOrderByInput struct {

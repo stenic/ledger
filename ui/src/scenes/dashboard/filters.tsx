@@ -25,11 +25,13 @@ export const Filter = ({
     location: string;
     environment: string;
     application: string;
+    day: string;
   };
   filterCallback?: (object: {
     location: string;
     environment: string;
     application: string;
+    day: string;
   }) => void;
 }) => {
   const { t } = useTranslation();
@@ -40,7 +42,8 @@ export const Filter = ({
     setHasFilters(
       filters.application !== "" ||
         filters.environment !== "" ||
-        filters.location !== ""
+        filters.location !== "" ||
+        filters.day !== ""
     );
   }, [filters]);
 
@@ -110,7 +113,7 @@ export const Filter = ({
                   onInputChange={(event, value) => {
                     setFilters({ ...filters, location: value });
                   }}
-                  options={locations || []}
+                  options={locations?.sort() || []}
                   value={filters.location}
                   renderInput={(params) => (
                     <TextField
@@ -127,7 +130,7 @@ export const Filter = ({
                   onInputChange={(event, value) => {
                     setFilters({ ...filters, environment: value });
                   }}
-                  options={environments || []}
+                  options={environments?.sort() || []}
                   value={filters.environment}
                   renderInput={(params) => (
                     <TextField
@@ -145,7 +148,7 @@ export const Filter = ({
                   onInputChange={(event, value) => {
                     setFilters({ ...filters, application: value });
                   }}
-                  options={applications || []}
+                  options={applications?.sort() || []}
                   renderInput={(params) => (
                     <TextField
                       name="application"
@@ -153,6 +156,17 @@ export const Filter = ({
                       label={t("type_application")}
                     />
                   )}
+                />
+                <TextField
+                  label={t("type_date")}
+                  type="date"
+                  value={initialState.day}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  onChange={(event) => {
+                    setFilters({ ...filters, day: event.target.value });
+                  }}
                 />
               </FormControl>
             </FormGroup>

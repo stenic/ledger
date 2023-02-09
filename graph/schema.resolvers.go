@@ -144,7 +144,6 @@ func (r *queryResolver) Locations(ctx context.Context, filter *model.VersionFilt
 		return nil, fmt.Errorf("access denield")
 	}
 
-	fmt.Printf("%+v\n", filter)
 	var resultLinks []*model.Location
 	for _, item := range locations.GetAll(model.NewFilter(filter)) {
 		resultLinks = append(resultLinks, &model.Location{
