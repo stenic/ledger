@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.2](https://github.com/stenic/ledger/compare/v1.13.1...v1.13.2) (2023-02-09)
+
+
+### Bug Fixes
+
+* Add date filter ([aef618e](https://github.com/stenic/ledger/commit/aef618eb88d0d65876ab6b738a4f15adb643d884))
+* **deps:** update module golang.org/x/crypto to v0.6.0 ([#33](https://github.com/stenic/ledger/issues/33)) ([bf24f32](https://github.com/stenic/ledger/commit/bf24f3255a2519452868030b933135d0eb0ef94b))
+* **deps:** update module sigs.k8s.io/controller-runtime to v0.14.4 ([#51](https://github.com/stenic/ledger/issues/51)) ([43bb515](https://github.com/stenic/ledger/commit/43bb51534c6bc91bc8f4f0a9aec6866ea672ae4c))
+
 ## [1.13.1](https://github.com/stenic/ledger/compare/v1.13.0...v1.13.1) (2023-02-07)
 
 
