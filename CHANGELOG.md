@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.3](https://github.com/stenic/ledger/compare/v1.13.2...v1.13.3) (2023-02-09)
+
+
+### Bug Fixes
+
+* Fix filter indicator with day filter ([c5e2d47](https://github.com/stenic/ledger/commit/c5e2d4759de471c22b54a671f08c5d281c82d1bb))
+
 ## [1.13.2](https://github.com/stenic/ledger/compare/v1.13.1...v1.13.2) (2023-02-09)
 
 
