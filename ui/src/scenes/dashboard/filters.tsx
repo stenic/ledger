@@ -40,12 +40,12 @@ export const Filter = ({
   const [hasFilters, setHasFilters] = useState(false);
   useEffect(() => {
     setHasFilters(
-      filters.application !== "" ||
-        filters.environment !== "" ||
-        filters.location !== "" ||
-        filters.day !== ""
+      initialState.application !== "" ||
+        initialState.environment !== "" ||
+        initialState.location !== "" ||
+        initialState.day !== ""
     );
-  }, [filters]);
+  }, [initialState]);
 
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
