@@ -11,7 +11,7 @@ require (
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/gobwas/ws v1.1.0
 	github.com/golang-migrate/migrate/v4 v4.15.2
-	github.com/hashicorp/go-retryablehttp v0.7.2
+	github.com/hashicorp/go-retryablehttp v0.7.4
 	github.com/sbecker/gin-api-demo v0.0.0-20180212174919-07f9a9242f74
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
