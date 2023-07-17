@@ -13,7 +13,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/hashicorp/go-retryablehttp v0.7.2
 	github.com/sbecker/gin-api-demo v0.0.0-20180212174919-07f9a9242f74
-	github.com/sirupsen/logrus v1.9.0
+	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.6.1
 	github.com/toorop/gin-logrus v0.0.0-20210225092905-2c785434f26f
 	github.com/vektah/gqlparser/v2 v2.5.1
