@@ -16,7 +16,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	github.com/toorop/gin-logrus v0.0.0-20210225092905-2c785434f26f
-	github.com/vektah/gqlparser/v2 v2.5.1
+	github.com/vektah/gqlparser/v2 v2.5.8
 	k8s.io/api v0.26.1
 	k8s.io/apimachinery v0.26.1
 )
