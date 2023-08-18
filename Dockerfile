@@ -1,4 +1,4 @@
-FROM golang:1.20 AS build-server
+FROM golang:1.21 AS build-server
 
 WORKDIR /workspace
 COPY ./go.* .
