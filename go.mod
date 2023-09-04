@@ -9,7 +9,7 @@ require (
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-sql-driver/mysql v1.7.0
-	github.com/gobwas/ws v1.1.0
+	github.com/gobwas/ws v1.3.0
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/hashicorp/go-retryablehttp v0.7.2
 	github.com/sbecker/gin-api-demo v0.0.0-20180212174919-07f9a9242f74
@@ -101,7 +101,7 @@ require (
 	golang.org/x/crypto v0.6.0
 	golang.org/x/mod v0.6.0 // indirect
 	golang.org/x/net v0.6.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/tools v0.2.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
