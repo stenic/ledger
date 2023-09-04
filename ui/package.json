@@ -9,7 +9,7 @@
     "@inovua/reactdatagrid-community": "^5.8.0",
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.11.2",
-    "@mui/x-data-grid": "^5.17.9",
+    "@mui/x-data-grid": "^6.12.1",
     "@mui/x-date-pickers": "^5.0.17",
     "@nivo/bar": "^0.80.0",
     "@nivo/calendar": "^0.80.0",
