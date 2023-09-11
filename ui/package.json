@@ -33,7 +33,7 @@
     "notistack": "^2.0.8",
     "oidc-client-ts": "^2.1.0",
     "react": "^18.2.0",
-    "react-admin": "^4.7.4",
+    "react-admin": "^4.14.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^12.1.5",
     "react-oidc-context": "^2.2.0",
