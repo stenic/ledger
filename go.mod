@@ -76,7 +76,7 @@ require (
 	github.com/go-playground/validator/v10 v10.11.1 // indirect
 	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/golang-jwt/jwt/v4 v4.4.3
-	github.com/google/uuid v1.3.0
+	github.com/google/uuid v1.5.0
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
