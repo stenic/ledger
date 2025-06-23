@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@date-io/moment": "^2.16.1",
+    "@date-io/moment": "^3.2.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@inovua/reactdatagrid-community": "^5.8.0",
