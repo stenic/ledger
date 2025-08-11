@@ -6,7 +6,7 @@
     "@date-io/moment": "^2.16.1",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
-    "@inovua/reactdatagrid-community": "^5.8.0",
+    "@inovua/reactdatagrid-community": "^5.10.2",
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.11.2",
     "@mui/x-data-grid": "^5.17.9",
