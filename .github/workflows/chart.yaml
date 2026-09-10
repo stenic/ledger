@@ -19,7 +19,7 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
-          version: v3.7.1
+          version: v3.22.0
 
       - uses: actions/setup-python@v4
         with:
@@ -50,7 +50,7 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
-          version: v3.7.1
+          version: v3.22.0
 
       - name: Setup polaris
         uses: fairwindsops/polaris/.github/actions/setup-polaris@master
@@ -75,7 +75,7 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
-          version: v3.7.1
+          version: v3.22.0
 
       - name: Scan helm 
         run: helm template ./charts/ledger --generate-name --dry-run | kubescape scan --controls-config .github/kubescape-controls-inputs.json -v --fail-threshold 5 -
@@ -91,7 +91,7 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
-          version: v3.7.1
+          version: v3.22.0
 
       - name: Download Pluto
         uses: FairwindsOps/pluto/github-action@master
